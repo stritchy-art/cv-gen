@@ -1,0 +1,336 @@
+<style>
+    /* Réinitialisation et styles de base */
+    body {
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+    }
+    .cv-page {
+        font-family: 'Calibri', 'Arial', sans-serif;
+        color: #333;
+        line-height: 1.4;
+        max-width: 210mm; /* Largeur A4 */
+        margin: 0 auto;
+        background: white;
+        padding: 50px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* En-tête */
+    .header {
+        margin-bottom: 20pt;
+        font-weight: bold;
+        text-align: center;
+    }
+    .header h1 {
+        font-size: 20pt;
+        color: #1D435B;
+        margin: 0;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    .header h2 {
+        font-size: 20pt;
+        color: #1D435B;
+        margin: 5px 0 0 0;
+        text-transform: uppercase;
+    }
+    .header .subtitle {
+        font-size: 20pt;
+        color: #AB8D53;
+        margin-top: 5px;
+    }
+
+    /* Titres de section principaux */
+    h3.section-title {
+        color: #1D435B;
+        font-size: 12pt;
+        font-weight: bold;
+        font-style: italic;
+        text-transform: uppercase;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        padding-left: 5px;
+        padding-bottom: 2px;
+        background-color: lightgray;
+    }
+
+    /* Sous-titres */
+    h4.subsection-title {
+        font-size: 12pt;
+        font-weight: bold;
+        color: #333;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        text-decoration: underline;
+    }
+
+    /* Listes */
+    ul {
+        margin-top: 0;
+        margin-bottom: 10px;
+        margin-left: 50px;
+        padding-left: 18px;
+        list-style-type: square;
+    }
+    li {
+        margin-bottom: 4px;
+        font-size: 12pt;
+        text-align: justify;
+    }
+    li::marker {
+        color: #1D435B;
+    }
+
+    /* Blocs d'expérience */
+    .job-block {
+        margin-bottom: 25px;
+        page-break-inside: avoid;
+    }
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 5px;
+        font-size: 14pt;
+        border-bottom: solid 1px black;
+        color: #BC944A;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .job-title {
+        font-size: 14pt;
+        font-style: italic;
+        font-weight: bold;
+        color: #444;
+        margin-bottom: 8px;
+    }
+    .context, .activities, .environment {
+        font-size: 12pt;
+    }
+    .label {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+    .tech-env {
+        margin-top: 8px;
+        font-size: 12pt;
+        color: #444;
+        font-style: italic;
+    }
+    .tech-env strong {
+        font-style: normal;
+        color: #000;
+    }
+</style>
+
+<div class="cv-page">
+
+    <div class="header">
+        <h1>Mickaël COCU</h1>
+        <h2>INGÉNIEUR SYSTÈMES DEVOPS</h2>
+        <div class="subtitle">18 ans d'expérience</div>
+    </div>
+
+    <h3 class="section-title">COMPETENCES</h3>
+
+    <h4 class="subsection-title">Compétences opérationnelles</h4>
+    <ul>
+        <li>Identifier les actions à mener afin de mettre en place une chaîne de valeur Devops, d'intégration & d'automatisation continue</li>
+        <li>Assurer l'automatisation du déploiement des applications en production et la fourniture des outils de supervision appropriés</li>
+        <li>Rédiger des documentations d'exploitation et techniques</li>
+        <li>Conception du pipeline des différents outils les plus appropriés au contexte client</li>
+        <li>Réaliser les tests d'intégration et tests de montée en charge</li>
+        <li>Assurer le maintien en condition opérationnelle des environnements systèmes</li>
+        <li>Mettre en œuvre les moyens et les procédures pour garantir les performances et la disponibilité des systèmes</li>
+        <li>Analyser les besoins des utilisateurs en matière de qualité, rapidité, facilité d'accès et sécurité</li>
+    </ul>
+
+    <h4 class="subsection-title">Compétences techniques</h4>
+    <ul>
+        <li><strong>Virtualisation :</strong> VMWare, Nutanix</li>
+        <li><strong>Base de données :</strong> Oracle, MySQL, PostgreSQL</li>
+        <li><strong>DevOps / Cloud :</strong> OpenShift, Terraform, Kubernetes, Docker, Ansible</li>
+        <li><strong>Langages :</strong> Python, Bash, PowerShell</li>
+        <li><strong>Sauvegarde et récupération :</strong> Veeam, CommVault</li>
+        <li><strong>Sécurité :</strong> WSUS, SCCM, Symantec (DLP)</li>
+        <li><strong>Gestion des identités :</strong> Active Directory</li>
+        <li><strong>ERP :</strong> SAP</li>
+        <li><strong>Supervision :</strong> Grafana, Centreon, Prometheus</li>
+    </ul>
+
+    <h3 class="section-title">FORMATIONS</h3>
+    <ul>
+        <li><strong>2025 :</strong> Terraform, Academy Conserto</li>
+        <li><strong>2023 :</strong> Kubernetes, Academy Conserto</li>
+        <li><strong>2022 :</strong> Docker, Academy Conserto</li>
+        <li><strong>2021 :</strong> Certification Kaspersky Endpoint Security & Management</li>
+        <li><strong>2020 :</strong> Nutanix, Global Knowledge</li>
+        <li><strong>2019 :</strong> Windows Server 2016, Dawan</li>
+        <li><strong>2018 :</strong> VmWare 6.5, Dawan</li>
+        <li><strong>2001 :</strong> Maîtrise d'informatique, Université de Picardie Jules Verne</li>
+        <li><strong>1999 :</strong> Licence d'informatique, Université de Picardie Jules Verne</li>
+    </ul>
+
+    <h3 class="section-title">EXPERIENCES PROFESSIONNELLES</h3>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>MAIF / CONSERTO (NIORT)</span>
+            <span>Octobre 2021 à aujourd'hui</span>
+        </div>
+        <div class="job-title">INGÉNIEUR SYSTÈMES - OPS</div>
+        
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Participation active au sein de l'équipe Centre de compétences Conserto Infrastructure & OPS à MAIF VIE pour l'intégration, l'industrialisation et le support des environnements critiques.
+        </div>
+        
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Intégration & déploiement d'applications sur environnements Linux, avec gestion complète des environnements de recette et préproduction.</li>
+                <li>Automatisation avancée des tâches récurrentes via Ansible, AWX et scripts Python, incluant la création d'API avec FastAPI.</li>
+                <li>Supervision & observabilité : mise en place et exploitation d'outils (Centreon, Prometheus, Grafana) pour la surveillance proactive.</li>
+                <li>Développement d'une application Python pour automatiser la gestion des copies de bases Oracle sur différents environnements.</li>
+                <li>Analyse et diagnostic des problèmes de performance des bases Oracle (projet migration GED).</li>
+                <li>Support & diagnostic : traitement des demandes et incidents, analyse de déploiement et optimisation des performances.</li>
+                <li>Conteneurisation et orchestration : maîtrise de Docker, Podman, Docker Swarm et OpenShift.</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> OpenShift, Docker Swarm, vSphere/VMware, GitLab, Ansible, AWX, Grafana, Prometheus, Centreon, Oracle, PostgreSQL, Python, API, Jira.
+        </div>
+    </div>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>EXPERIS (NIORT)</span>
+            <span>Septembre 2019 à Octobre 2021</span>
+        </div>
+        <div class="job-title">ADMINISTRATEUR SYSTÈMES ET RÉSEAUX</div>
+
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Administration Système en Centre de Service dans un contexte mutualisé et multi-clients (Service public, Industrie, Assurance).
+        </div>
+
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Traitement des demandes et incidents de niveau 2-3 (Windows, Linux, VMware).</li>
+                <li>Mise en œuvre des demandes de changements et opérations Active Directory (Comptes, OU, GPO).</li>
+                <li>Maintenance des serveurs, infrastructure et patching de sécurité (Exchange 2016, Citrix NetScaler).</li>
+                <li>Participation aux audits clients (AD, Kaspersky) et mise en place d'un AD FS.</li>
+                <li>Automatisation des actions via scripts PowerShell et amélioration des procédures.</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> VMware, Nutanix, Windows, Linux, Veeam, CommVault, NetBackup, NetApp, Kaspersky AV, WSUS.
+        </div>
+    </div>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>FDL - GROUPE INTERMARCHÉ (NIORT)</span>
+            <span>Juillet 2017 à Août 2019</span>
+        </div>
+        <div class="job-title">ADMINISTRATEUR SYSTÈMES ET RÉSEAUX</div>
+
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Renfort pour la remise en conformité d'une infrastructure obsolète et mise en place d'interfaces entre outils métiers et SAP.
+        </div>
+
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Administration système, maintenance serveurs et gestion des sauvegardes.</li>
+                <li>Migration de l'infrastructure Hyper-V vers VMware et de la messagerie vers O365.</li>
+                <li>Mise en place de la gestion des impressions (Papercut) et segmentation VLAN.</li>
+                <li>Suivi des interfaces ERP/SAP et analyse des problèmes fonctionnels.</li>
+                <li>Création de scripts d'aide à l'analyse des erreurs et tests de non régression.</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> Hyper-V, VMware, Windows, Veeam, Centreon, Fortigate, AS400.
+        </div>
+    </div>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>A CAPPELLA (AMIENS)</span>
+            <span>Octobre 2014 à Juin 2017</span>
+        </div>
+        <div class="job-title">TECHNICIEN INFORMATIQUE</div>
+
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Administration systèmes et réseaux du centre de relations clients. Assistance DSI en temps partagé.
+        </div>
+
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Administration du SI, maintenance serveurs et sauvegardes.</li>
+                <li>Migration Windows 2003 vers 2008 et segmentation réseau VLAN.</li>
+                <li>Mise en place de supervision (Centreon).</li>
+                <li>Cartographie de l'infrastructure et rétro-documentation.</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> VMware, Windows, Symantec NetBackup, Centreon, Alcatel OmniPCX, réseau HP, Stormshield.
+        </div>
+    </div>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>CAF DE LA SOMME (AMIENS)</span>
+            <span>Janvier 2014 à Septembre 2014</span>
+        </div>
+        <div class="job-title">TECHNICIEN INFORMATIQUE</div>
+
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Renfort dans le cadre de la migration des postes de travail vers Windows 7.
+        </div>
+
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Planification et migration des postes vers Windows 7 via SCCM.</li>
+                <li>Rédaction de documentations et support utilisateurs.</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> Windows, SCCM.
+        </div>
+    </div>
+
+    <div class="job-block">
+        <div class="job-header">
+            <span>LYCÉE JCA PELTIER (HAM)</span>
+            <span>Septembre 2007 à Septembre 2013</span>
+        </div>
+        <div class="job-title">TECHNICIEN INFORMATIQUE</div>
+
+        <div class="context">
+            <span class="label">Contexte :</span>
+            Administration des équipements systèmes et réseaux de l'établissement.
+        </div>
+
+        <div class="activities">
+            <br><span class="label">Activités :</span>
+            <ul>
+                <li>Migration des serveurs (Windows 2003, fichiers, Firewall, Antivirus).</li>
+                <li>Mise en place réseau Wifi et nouvelle infrastructure réseau.</li>
+                <li>Formateur pour le GRETA (Bureautique).</li>
+            </ul>
+        </div>
+        <div class="tech-env">
+            <strong>Environnement technique :</strong> Windows, Linux.
+        </div>
+    </div>
+
+</div>

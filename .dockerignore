@@ -1,0 +1,51 @@
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environnements virtuels
+.env
+.venv
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs et cache
+logs/
+.cache/
+*.log
+
+# Fichiers temporaires
+uploads/
+*.tmp
+*.pdf
+*.docx
+!assets/*.html
+!assets/*.png
+
+# Git
+.git/
+.gitignore
+
+# Documentation temporaire
+*.md.backup
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+tests/
+pytest_cache/
+.coverage
+
+# Docker (pour éviter la récursion)
+.dockerignore
+Dockerfile
+docker-compose*.yml

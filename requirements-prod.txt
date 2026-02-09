@@ -1,0 +1,60 @@
+# Dépendances pour le projet CV Generator - Version Production
+# Installation: pip install -r requirements-prod.txt
+
+# === Core Dependencies ===
+
+# Traitement PDF
+pdfplumber>=0.10.0
+
+# Génération de fichiers Word
+python-docx>=1.1.0
+
+# API OpenAI pour le LLM
+openai>=1.0.0
+
+# === Backend API ===
+
+# FastAPI pour l'API REST
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Validation de données
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# === Frontend ===
+
+# Interface web
+streamlit>=1.28.0
+
+# Requêtes HTTP
+requests>=2.31.0
+
+# === Configuration & Logging ===
+
+# Variables d'environnement
+python-dotenv>=1.0.0
+
+# === Utilities ===
+
+# Gestion de fichiers
+pathlib2>=2.3.7; python_version < '3.4'
+
+# === Testing (optionnel) ===
+
+# Framework de tests
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Client de test HTTP
+httpx>=0.25.0
+
+# === Production ===
+
+# WSGI/ASGI server
+gunicorn>=21.2.0
+
+# Monitoring (optionnel)
+# prometheus-client>=0.19.0

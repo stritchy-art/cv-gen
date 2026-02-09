@@ -1,0 +1,22 @@
+# Thème personnalisé ALLTECH
+[theme]
+primaryColor = "#BC944A"        # Doré - pour les boutons et éléments interactifs
+backgroundColor = "#FFFFFF"      # Blanc - fond principal
+secondaryBackgroundColor = "#F5F5F5"  # Gris très clair - zones secondaires
+textColor = "#1D435B"            # Bleu foncé ALLTECH - texte principal
+font = "sans serif"              # Police moderne
+
+# Couleurs d'accentuation
+# Le thème utilise les couleurs ALLTECH :
+# - #1D435B : Bleu foncé (texte principal)
+# - #8D7034 : Marron (utilisé dans les éléments de l'interface)
+# - #BC944A : Doré (couleur primaire pour les boutons)
+
+[server]
+# Configuration du serveur
+headless = true
+port = 8501
+
+[browser]
+# Configuration du navigateur
+gatherUsageStats = false
