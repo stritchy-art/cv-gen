@@ -7,7 +7,7 @@ from components.history import save_cv_to_history, get_cv_from_history
 from components.translations import t
 
 
-def process_conversion(uploaded_files, improvement_mode, job_offer_file, generate_pitch, api_url, candidate_name=None, max_pages=None, target_language='fr'):
+def process_conversion(uploaded_files, improvement_mode, job_offer_file, generate_pitch, api_url, candidate_name=None, max_pages=None, target_language='fr', model='gpt-4o-mini'):
     """
     Lance la conversion des CV
     
@@ -20,6 +20,7 @@ def process_conversion(uploaded_files, improvement_mode, job_offer_file, generat
         candidate_name: Nom du candidat (optionnel)
         max_pages: Nombre maximum de pages (optionnel)
         target_language: Langue cible pour la traduction du CV (fr, en, it, es)
+        model: Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
     """
     # Validation: si mode targeted, l'appel d'offres est requis
     if improvement_mode == "targeted" and not job_offer_file:
@@ -101,7 +102,8 @@ def process_conversion(uploaded_files, improvement_mode, job_offer_file, generat
                 # Préparer les données du formulaire
                 form_data = {
                     'generate_pitch': str(generate_pitch).lower(),
-                    'improvement_mode': improvement_mode
+                    'improvement_mode': improvement_mode,
+                    'model': model
                 }
                 
                 # Ajouter le nom du candidat si fourni

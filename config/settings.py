@@ -5,9 +5,44 @@ Gestion des variables d'environnement avec validation
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, List
 from pydantic_settings import BaseSettings
 from pydantic import Field, validator
+
+
+# Configuration des modèles OpenAI disponibles
+AVAILABLE_MODELS = {
+    "gpt-4o": {
+        "name": "GPT-4o",
+        "model_id": "gpt-4o",
+        "performance": "⭐⭐⭐⭐⭐",
+        "cost": "💰💰💰",
+        "cost_key": "model_cost_high",
+        "description_key": "model_gpt4o_desc",
+        "performance_key": "model_perf_excellent",
+        "cost_label_key": "model_cost_label_high"
+    },
+    "gpt-5-mini": {
+        "name": "GPT-5 Mini",
+        "model_id": "gpt-5-mini",
+        "performance": "⭐⭐⭐⭐",
+        "cost": "💰",
+        "cost_key": "model_cost_medium",
+        "description_key": "model_gpt5mini_desc",
+        "performance_key": "model_perf_very_good",
+        "cost_label_key": "model_cost_label_medium"
+    },
+    "gpt-3.5-turbo": {
+        "name": "GPT-3.5 Turbo",
+        "model_id": "gpt-3.5-turbo",
+        "performance": "⭐⭐⭐",
+        "cost": "💰",
+        "cost_key": "model_cost_low",
+        "description_key": "model_gpt35_desc",
+        "performance_key": "model_perf_good",
+        "cost_label_key": "model_cost_label_low"
+    }
+}
 
 
 class Settings(BaseSettings):
@@ -18,7 +53,6 @@ class Settings(BaseSettings):
     
     # OpenAI
     OPENAI_API_KEY: str = Field(..., description="Clé API OpenAI")
-    OPENAI_MODEL: str = Field(default="gpt-5-mini", description="Modèle OpenAI à utiliser")
     OPENAI_MAX_TOKENS: int = Field(default=1000, description="Nombre maximum de tokens pour les réponses")
     OPENAI_TEMPERATURE: float = Field(default=0.1, description="Température pour la génération")
     

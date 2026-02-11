@@ -31,7 +31,8 @@ class CVConversionService:
         job_offer_path: Optional[str] = None,
         candidate_name: Optional[str] = None,
         max_pages: Optional[int] = None,
-        target_language: Optional[str] = None
+        target_language: Optional[str] = None,
+        model: str = "gpt-4o-mini"
     ) -> Tuple[bool, Optional[str], Optional[dict], Optional[str], float]:
         """
         Convertit un CV PDF en DOCX
@@ -46,6 +47,7 @@ class CVConversionService:
             candidate_name: Nom du candidat (optionnel, remplacera le nom extrait)
             max_pages: Nombre maximum de pages (optionnel)
             target_language: Langue cible pour la traduction (optionnel: fr, en, it, es)
+            model: Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
             
         Returns:
             Tuple (success, docx_path, cv_data, pitch, processing_time)
@@ -78,7 +80,8 @@ class CVConversionService:
                 job_offer_path=job_offer_path,
                 candidate_name=candidate_name,
                 max_pages=max_pages,
-                target_language=target_language
+                target_language=target_language,
+                model=model
             )
             
             # Récupération du pitch (peut être None si generate_pitch=False)

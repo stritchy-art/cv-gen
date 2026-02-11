@@ -87,6 +87,28 @@ TRANSLATIONS = {
         "mcd_formula": "Formule MCD",
         
         # Conversion
+        "convert_section": "🚀 Génération du CV",
+        "select_model": "Modèle IA à utiliser",
+        "select_model_help": "Choisissez le modèle OpenAI pour générer votre CV. Les modèles plus performants produisent de meilleurs résultats mais coûtent plus cher.",
+        
+        # Modèles IA - Performance
+        "model_perf_excellent": "Excellent",
+        "model_perf_very_good": "Très bon",
+        "model_perf_good": "Bon",
+        
+        # Modèles IA - Coût
+        "model_cost_high": "~0,03$/CV généré",
+        "model_cost_medium": "~0,003$/CV généré",
+        "model_cost_low": "~0,001$/CV généré",
+        "model_cost_label_high": "Élevé",
+        "model_cost_label_medium": "Économique",
+        "model_cost_label_low": "Très économique",
+        
+        # Modèles IA - Descriptions
+        "model_gpt4o_desc": "Modèle le plus performant. Meilleure qualité de génération et compréhension. Recommandé pour les CV critiques.",
+        "model_gpt5mini_desc": "Bon équilibre performance/coût. Qualité élevée à prix réduit. Recommandé pour un usage quotidien.",
+        "model_gpt35_desc": "Modèle rapide et économique. Qualité correcte pour des CV standards. Idéal pour tests et volumes importants.",
+        
         "convert_button": "🚀 Convertir",
         "convert_multiple": "🚀 Convertir {count} CV",
         "processing_cv": "📄 Traitement du CV {current}/{total}: {filename}",
@@ -255,6 +277,28 @@ TRANSLATIONS = {
         "mcd_formula": "DCM formula",
         
         # Conversion
+        "convert_section": "🚀 CV Generation",
+        "select_model": "AI Model to Use",
+        "select_model_help": "Choose the OpenAI model to generate your CV. More performant models produce better results but cost more.",
+        
+        # AI Models - Performance
+        "model_perf_excellent": "Excellent",
+        "model_perf_very_good": "Very Good",
+        "model_perf_good": "Good",
+        
+        # AI Models - Cost
+        "model_cost_high": "~$0.03/CV generated",
+        "model_cost_medium": "~$0.003/CV generated",
+        "model_cost_low": "~$0.001/CV generated",
+        "model_cost_label_high": "High",
+        "model_cost_label_medium": "Economic",
+        "model_cost_label_low": "Very Economic",
+        
+        # AI Models - Descriptions
+        "model_gpt4o_desc": "Most powerful model. Best generation quality and understanding. Recommended for critical CVs.",
+        "model_gpt5mini_desc": "Good performance/cost balance. High quality at reduced price. Recommended for daily use.",
+        "model_gpt35_desc": "Fast and economic model. Good quality for standard CVs. Ideal for testing and high volumes.",
+        
         "convert_button": "🚀 Convert",
         "convert_multiple": "🚀 Convert {count} CVs",
         "processing_cv": "📄 Processing CV {current}/{total}: {filename}",
@@ -424,6 +468,28 @@ TRANSLATIONS = {
         "mcd_formula": "Formula MCD",
         
         # Conversione
+        "convert_section": "🚀 Generazione del CV",
+        "select_model": "Modello IA da Utilizzare",
+        "select_model_help": "Scegli il modello OpenAI per generare il tuo CV. I modelli più performanti producono risultati migliori ma costano di più.",
+        
+        # Modelli IA - Performance
+        "model_perf_excellent": "Eccellente",
+        "model_perf_very_good": "Molto buono",
+        "model_perf_good": "Buono",
+        
+        # Modelli IA - Costo
+        "model_cost_high": "~$0,03/CV generato",
+        "model_cost_medium": "~$0,003/CV generato",
+        "model_cost_low": "~$0,001/CV generato",
+        "model_cost_label_high": "Alto",
+        "model_cost_label_medium": "Economico",
+        "model_cost_label_low": "Molto economico",
+        
+        # Modelli IA - Descrizioni
+        "model_gpt4o_desc": "Modello più potente. Migliore qualità di generazione e comprensione. Consigliato per CV critici.",
+        "model_gpt5mini_desc": "Buon equilibrio prestazioni/costo. Alta qualità a prezzo ridotto. Consigliato per uso quotidiano.",
+        "model_gpt35_desc": "Modello veloce ed economico. Buona qualità per CV standard. Ideale per test e volumi elevati.",
+        
         "convert_button": "🚀 Converti",
         "convert_multiple": "🚀 Converti {count} CV",
         "processing_cv": "📄 Elaborazione CV {current}/{total}: {filename}",
@@ -590,6 +656,28 @@ TRANSLATIONS = {
         "mcd_formula": "Fórmula MCD",
         
         # Conversión
+        "convert_section": "🚀 Generación del CV",
+        "select_model": "Modelo IA a Utilizar",
+        "select_model_help": "Elige el modelo OpenAI para generar tu CV. Los modelos más eficientes producen mejores resultados pero cuestan más.",
+        
+        # Modelos IA - Rendimiento
+        "model_perf_excellent": "Excelente",
+        "model_perf_very_good": "Muy bueno",
+        "model_perf_good": "Bueno",
+        
+        # Modelos IA - Costo
+        "model_cost_high": "~$0,03/CV generado",
+        "model_cost_medium": "~$0,003/CV generado",
+        "model_cost_low": "~$0,001/CV generado",
+        "model_cost_label_high": "Alto",
+        "model_cost_label_medium": "Económico",
+        "model_cost_label_low": "Muy económico",
+        
+        # Modelos IA - Descripciones
+        "model_gpt4o_desc": "Modelo más potente. Mejor calidad de generación y comprensión. Recomendado para CV críticos.",
+        "model_gpt5mini_desc": "Buen equilibrio rendimiento/costo. Alta calidad a precio reducido. Recomendado para uso diario.",
+        "model_gpt35_desc": "Modelo rápido y económico. Buena calidad para CV estándar. Ideal para pruebas y volúmenes altos.",
+        
         "convert_button": "🚀 Convertir",
         "convert_multiple": "🚀 Convertir {count} CV",
         "processing_cv": "📄 Procesando CV {current}/{total}: {filename}",

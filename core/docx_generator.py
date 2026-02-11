@@ -460,11 +460,12 @@ class CVDocxGenerator:
         
         # Entreprise (gauche, doré, gras, majuscules)
         # Nettoyer le nom de l'entreprise : enlever "(NON RENSEIGNÉ)" ou "()" vides
+        import re
         company_name = experience.get('company', '')
-        if company_name.endswith('(NON RENSEIGNÉ)'):
-            company_name = company_name.replace('(NON RENSEIGNÉ)', '').strip()
-        elif company_name.endswith('()'):
-            company_name = company_name.replace('()', '').strip()
+        # Enlever les parenthèses vides ou avec seulement des espaces
+        company_name = re.sub(r'\s*\(\s*\)\s*$', '', company_name).strip()
+        # Enlever "(NON RENSEIGNÉ)" à la fin
+        company_name = re.sub(r'\s*\(NON RENSEIGNÉ\)\s*$', '', company_name, flags=re.IGNORECASE).strip()
         
         company_run = header_para.add_run(company_name.upper())
         company_run.font.size = Pt(14)

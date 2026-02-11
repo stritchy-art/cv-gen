@@ -106,7 +106,7 @@ class CVConverterAgent:
             print(f"✗ Erreur lors de l'extraction de l'appel d'offres : {e}")
             raise
     
-    def extract_structured_data_with_llm(self, pdf_text: str, improve_content: bool = False, improvement_mode: str = "none", job_offer_content: Optional[str] = None, max_pages: Optional[int] = None, target_language: Optional[str] = None) -> dict:
+    def extract_structured_data_with_llm(self, pdf_text: str, improve_content: bool = False, improvement_mode: str = "none", job_offer_content: Optional[str] = None, max_pages: Optional[int] = None, target_language: Optional[str] = None, model: str = "gpt-4o-mini") -> dict:
         """Utilise le LLM pour extraire les données structurées du CV
         
         Args:
@@ -116,6 +116,7 @@ class CVConverterAgent:
             job_offer_content: Contenu de l'appel d'offres pour l'amélioration ciblée
             max_pages: Nombre maximum de pages (optionnel)
             target_language: Langue cible pour la traduction (optionnel: en, it, es)
+            model: Modèle OpenAI à utiliser
             
         Returns:
             dict: Données structurées du CV
@@ -311,7 +312,7 @@ class CVConverterAgent:
         
         try:
             response = self.client.chat.completions.create(
-                model=self.model,
+                model=model,
                 messages=[
                     {"role": "system", "content": "Tu es un assistant spécialisé dans l'extraction de données structurées à partir de CV. Tu retournes uniquement du JSON valide."},
                     {"role": "user", "content": prompt + pdf_text}
@@ -333,12 +334,13 @@ class CVConverterAgent:
             print(f"✗ Erreur lors de l'extraction structurée : {e}")
             raise
     
-    def generate_profile_pitch(self, cv_data, job_offer_content=None):
+    def generate_profile_pitch(self, cv_data, job_offer_content=None, model="gpt-4o-mini"):
         """Génère un pitch de profil pour présenter le candidat à un client
         
         Args:
             cv_data: Données structurées du CV
             job_offer_content: Contenu de l'appel d'offres (optionnel, pour pitch ciblé)
+            model: Modèle OpenAI à utiliser
             
         Returns:
             str: Pitch de présentation du profil
@@ -408,7 +410,7 @@ Rédige le pitch directement, sans introduction ni conclusion."""
         try:
             print("🔄 Génération du pitch via OpenAI API...")
             response = self.client.chat.completions.create(
-                model=self.model,
+                model=model,
                 messages=[
                     {"role": "system", "content": "Tu es un consultant RH expert en rédaction de présentations professionnelles."},
                     {"role": "user", "content": prompt}
@@ -441,7 +443,7 @@ Rédige le pitch directement, sans introduction ni conclusion."""
             print(f"[ERROR] Clé API présente: {bool(os.getenv('OPENAI_API_KEY'))}")
             return None
     
-    def process_cv(self, pdf_path, output_path=None, generate_pitch=True, improve_content=False, improvement_mode="none", job_offer_path=None, candidate_name=None, max_pages=None, target_language=None):
+    def process_cv(self, pdf_path, output_path=None, generate_pitch=True, improve_content=False, improvement_mode="none", job_offer_path=None, candidate_name=None, max_pages=None, target_language=None, model="gpt-4o-mini"):
         """Traite un CV (PDF ou DOCX) et génère un fichier DOCX formaté
         
         Args:
@@ -454,6 +456,7 @@ Rédige le pitch directement, sans introduction ni conclusion."""
             candidate_name: Nom du candidat (optionnel, remplacera le nom extrait)
             max_pages: Nombre maximum de pages (optionnel)
             target_language: Langue cible pour la traduction (optionnel: fr, en, it, es)
+            model: Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
             
         Returns:
             Tuple[str, dict]: Chemin du fichier DOCX généré et données structurées du CV
@@ -499,7 +502,7 @@ Rédige le pitch directement, sans introduction ni conclusion."""
             print("🎯 Mode amélioration ciblée activé - Le CV sera adapté à l'appel d'offres")
         elif improve_content or improvement_mode == "basic":
             print("⚠️  Mode amélioration basique activé - Le LLM va améliorer le contenu")
-        cv_data = self.extract_structured_data_with_llm(cv_text, improve_content=improve_content, improvement_mode=improvement_mode, job_offer_content=job_offer_content, max_pages=max_pages, target_language=target_language)
+        cv_data = self.extract_structured_data_with_llm(cv_text, improve_content=improve_content, improvement_mode=improvement_mode, job_offer_content=job_offer_content, max_pages=max_pages, target_language=target_language, model=model)
         print()
         
         # Remplacer le nom si candidate_name est fourni
@@ -534,7 +537,7 @@ Rédige le pitch directement, sans introduction ni conclusion."""
         if generate_pitch:
             print("Étape 4/4 : Génération du pitch de présentation...")
             # Passer le contenu de l'appel d'offres si disponible pour un pitch ciblé
-            pitch = self.generate_profile_pitch(cv_data, job_offer_content=job_offer_content)
+            pitch = self.generate_profile_pitch(cv_data, job_offer_content=job_offer_content, model=model)
             if pitch:
                 print(f"✓ Pitch généré ({len(pitch)} caractères)")
                 if job_offer_content:

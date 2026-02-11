@@ -104,13 +104,56 @@ generate_pitch, improvement_mode, job_offer_file, candidate_name, max_pages = re
 if uploaded_files:
     preview_pdf_files(uploaded_files)
     
-    # Bouton de conversion
-    col1, col2 = st.columns([1, 3])
+    # Sélection du modèle et bouton de conversion
+    st.markdown("---")
+    st.markdown(f"### {t('convert_section')}")
+    
+    col1, col2 = st.columns([2, 3])
+    
     with col1:
+        # Importer la configuration des modèles
+        from config.settings import AVAILABLE_MODELS
+        
+        # Créer la liste déroulante pour le modèle
+        model_options = list(AVAILABLE_MODELS.keys())
+        model_labels = [AVAILABLE_MODELS[key]['name'] for key in model_options]
+        
+        selected_model_index = st.selectbox(
+            t("select_model"),
+            options=range(len(model_options)),
+            format_func=lambda i: model_labels[i],
+            index=1,  # gpt-4o-mini par défaut
+            help=t("select_model_help")
+        )
+        
+        selected_model_key = model_options[selected_model_index]
+        model_info = AVAILABLE_MODELS[selected_model_key]
+        
+        # Récupérer les textes traduits via les clés
+        performance_text = f"{model_info['performance']} {t(model_info['performance_key'])}"
+        cost_text = f"{model_info['cost']} {t(model_info['cost_label_key'])}"
+        cost_details = t(model_info['cost_key'])
+        description = t(model_info['description_key'])
+        
+        # Afficher les infos du modèle sélectionné
+        st.markdown(f"""
+        <div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px;'>
+            <p style='margin: 0; font-size: 0.9em;'>
+                <strong>Performance:</strong> {performance_text}<br>
+                <strong>Coût:</strong> {cost_text} ({cost_details})<br>
+                <small>{description}</small>
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.write("")  # Espaceur
+        st.write("")  # Espaceur
         button_text = t("convert_multiple", count=len(uploaded_files)) if len(uploaded_files) > 1 else t("convert_button")
         convert_button = st.button(
             button_text,
-            use_container_width=True
+            use_container_width=True,
+            type="primary"
         )
     
     if convert_button:
@@ -126,7 +169,8 @@ if uploaded_files:
             api_url=API_URL,
             candidate_name=candidate_name,
             max_pages=max_pages,
-            target_language=current_language
+            target_language=current_language,
+            model=model_info['model_id']
         )
 
 # Afficher les résultats (persiste après download)

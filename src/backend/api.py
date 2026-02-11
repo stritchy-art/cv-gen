@@ -84,7 +84,8 @@ async def convert_cv(
     job_offer_file: Optional[UploadFile] = File(None, description=t("job_offer_description", lang="fr")),
     candidate_name: Optional[str] = Form(None, description=t("candidate_name_description", lang="fr")),
     max_pages: Optional[str] = Form(None, description=t("max_pages_description", lang="fr")),
-    target_language: Optional[str] = Form(None, description=t("target_language_description", lang="fr"))
+    target_language: Optional[str] = Form(None, description=t("target_language_description", lang="fr")),
+    model: Optional[str] = Form("gpt-4o-mini", description="Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)")
 ):
     """
     Convertit un CV (PDF ou DOCX) en DOCX formaté
@@ -97,6 +98,7 @@ async def convert_cv(
         candidate_name: Nom du candidat (optionnel)
         max_pages: Nombre maximum de pages (optionnel)
         target_language: Langue cible pour la traduction (optionnel: fr, en, it, es)
+        model: Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
         
     Returns:
         ConversionResponse avec le résultat de la conversion
@@ -188,7 +190,8 @@ async def convert_cv(
                 job_offer_path=job_offer_path,
                 candidate_name=candidate_name,
                 max_pages=max_pages_int,
-                target_language=target_language
+                target_language=target_language,
+                model=model
             )
         
         if not success:
