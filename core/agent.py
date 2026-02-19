@@ -9,9 +9,8 @@ Ce script orchestre le processus complet :
 import os
 import json
 import hashlib
-import traceback
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 from diskcache import Cache

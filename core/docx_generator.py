@@ -4,7 +4,7 @@ Crée un fichier Word formaté avec le même style visuel que CV_exemple.html
 """
 
 from pathlib import Path
-from typing import Optional, Dict, List, Any
+# Removed unused imports - types used via dict, list builtin types
 
 from docx import Document
 from docx.shared import Pt, Inches, Cm, RGBColor
