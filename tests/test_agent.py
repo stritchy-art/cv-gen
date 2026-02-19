@@ -19,11 +19,13 @@ from core.agent import CVConverterAgent
 class TestCVConverterAgent:
     """Tests pour l'agent de conversion CV"""
 
-    def test_initialization_with_api_key(self):
+    @patch("core.agent.OpenAI")
+    def test_initialization_with_api_key(self, mock_openai):
         """Test initialisation avec clé API"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             assert agent.model == "gpt-5-mini"
+            mock_openai.assert_called_once_with(api_key="test-key")
 
     def test_initialization_without_api_key(self):
         """Test initialisation sans clé API"""
@@ -31,7 +33,8 @@ class TestCVConverterAgent:
             with pytest.raises(ValueError, match="OPENAI_API_KEY requise"):
                 CVConverterAgent()
 
-    def test_initialization_custom_model(self):
+    @patch("core.agent.OpenAI")
+    def test_initialization_custom_model(self, mock_openai):
         """Test initialisation avec modèle personnalisé"""
         with patch.dict(
             os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "gpt-4o"}
@@ -39,7 +42,8 @@ class TestCVConverterAgent:
             agent = CVConverterAgent()
             assert agent.model == "gpt-4o"
 
-    def test_generate_cache_key_basic(self):
+    @patch("core.agent.OpenAI")
+    def test_generate_cache_key_basic(self, mock_openai):
         """Test génération de clé de cache basique"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -47,7 +51,8 @@ class TestCVConverterAgent:
             assert key.startswith("cv_")
             assert "_none_False" in key
 
-    def test_generate_cache_key_with_job_offer(self):
+    @patch("core.agent.OpenAI")
+    def test_generate_cache_key_with_job_offer(self, mock_openai):
         """Test génération de clé de cache avec appel d'offres"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -58,7 +63,8 @@ class TestCVConverterAgent:
             assert key1 != key2
             assert "_targeted_True_" in key1
 
-    def test_generate_cache_key_consistency(self):
+    @patch("core.agent.OpenAI")
+    def test_generate_cache_key_consistency(self, mock_openai):
         """Test cohérence de la génération de clé de cache"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -66,14 +72,16 @@ class TestCVConverterAgent:
             key2 = agent._generate_cache_key("test", False, "none")
             assert key1 == key2
 
-    def test_extract_job_offer_content_file_not_found(self):
+    @patch("core.agent.OpenAI")
+    def test_extract_job_offer_content_file_not_found(self, mock_openai):
         """Test extraction d'appel d'offres avec fichier inexistant"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             with pytest.raises(FileNotFoundError):
                 agent.extract_job_offer_content("nonexistent.pdf")
 
-    def test_extract_job_offer_content_unsupported_format(self):
+    @patch("core.agent.OpenAI")
+    def test_extract_job_offer_content_unsupported_format(self, mock_openai):
         """Test extraction d'appel d'offres avec format non supporté"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -89,7 +97,8 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink()
 
-    def test_extract_job_offer_content_txt(self):
+    @patch("core.agent.OpenAI")
+    def test_extract_job_offer_content_txt(self, mock_openai):
         """Test extraction d'appel d'offres TXT"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -107,8 +116,9 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink()
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.docx2txt.process")
-    def test_extract_job_offer_content_docx(self, mock_docx2txt):
+    def test_extract_job_offer_content_docx(self, mock_docx2txt, mock_openai):
         """Test extraction d'appel d'offres DOCX"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -126,8 +136,9 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink()
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_pdf_content")
-    def test_extract_job_offer_content_pdf(self, mock_extract_pdf):
+    def test_extract_job_offer_content_pdf(self, mock_extract_pdf, mock_openai):
         """Test extraction d'appel d'offres PDF"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -421,11 +432,12 @@ class TestCVConverterAgent:
 
             assert pitch is None
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_pdf_content")
     @patch("core.agent.CVConverterAgent.extract_structured_data_with_llm")
     @patch("core.agent.generate_docx_from_cv_data")
     def test_process_cv_pdf_basic(
-        self, mock_gen_docx, mock_extract_llm, mock_extract_pdf
+        self, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV PDF basique"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
@@ -466,10 +478,13 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink(missing_ok=True)
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_docx_content")
     @patch("core.agent.CVConverterAgent.extract_structured_data_with_llm")
     @patch("core.agent.generate_docx_from_cv_data")
-    def test_process_cv_docx(self, mock_gen_docx, mock_extract_llm, mock_extract_docx):
+    def test_process_cv_docx(
+        self, mock_gen_docx, mock_extract_llm, mock_extract_docx, mock_openai
+    ):
         """Test traitement CV DOCX"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -505,12 +520,13 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink(missing_ok=True)
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_pdf_content")
     @patch("core.agent.CVConverterAgent.extract_structured_data_with_llm")
     @patch("core.agent.generate_docx_from_cv_data")
     @patch("core.agent.CVConverterAgent.generate_profile_pitch")
     def test_process_cv_with_pitch(
-        self, mock_pitch, mock_gen_docx, mock_extract_llm, mock_extract_pdf
+        self, mock_pitch, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV avec génération de pitch"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
@@ -544,8 +560,9 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink(missing_ok=True)
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_pdf_content")
-    def test_process_cv_insufficient_content(self, mock_extract_pdf):
+    def test_process_cv_insufficient_content(self, mock_extract_pdf, mock_openai):
         """Test traitement CV avec contenu insuffisant"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -564,7 +581,8 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink(missing_ok=True)
 
-    def test_process_cv_unsupported_format(self):
+    @patch("core.agent.OpenAI")
+    def test_process_cv_unsupported_format(self, mock_openai):
         """Test traitement CV avec format non supporté"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
@@ -579,11 +597,12 @@ class TestCVConverterAgent:
             finally:
                 Path(tmp_path).unlink(missing_ok=True)
 
+    @patch("core.agent.OpenAI")
     @patch("core.agent.extract_pdf_content")
     @patch("core.agent.CVConverterAgent.extract_structured_data_with_llm")
     @patch("core.agent.generate_docx_from_cv_data")
     def test_process_cv_with_candidate_name(
-        self, mock_gen_docx, mock_extract_llm, mock_extract_pdf
+        self, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV avec nom candidat personnalisé"""
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):

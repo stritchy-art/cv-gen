@@ -6,6 +6,7 @@ import pytest
 from pathlib import Path
 import sys
 import tempfile
+import os
 from unittest.mock import Mock, patch
 
 # Ajouter le répertoire racine au PYTHONPATH
@@ -19,9 +20,11 @@ class TestCVConversionService:
     """Tests du service de conversion"""
 
     @pytest.fixture
-    def service(self):
+    @patch("core.agent.OpenAI")
+    def service(self, mock_openai):
         """Fixture pour le service de conversion"""
-        return CVConversionService()
+        with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
+            return CVConversionService()
 
     def test_service_initialization(self, service):
         """Test de l'initialisation du service"""
