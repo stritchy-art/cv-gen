@@ -117,7 +117,7 @@ class TestCVConversionService:
             assert docx_path is not None
             assert cv_data is not None
             assert pitch == "Test pitch"
-            assert time > 0
+            assert time >= 0  # Time can be 0.0 with mocks
             mock_process_cv.assert_called_once()
         finally:
             Path(tmp_path).unlink(missing_ok=True)
