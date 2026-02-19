@@ -11,6 +11,10 @@ from docx.shared import Pt, Inches, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+from config.logging_config import setup_logger
+
+# Logger
+logger = setup_logger(__name__, 'docx_generator.log')
 
 
 class CVDocxGenerator:

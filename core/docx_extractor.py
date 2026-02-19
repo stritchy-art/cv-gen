@@ -6,6 +6,10 @@ Extrait le texte d'un fichier DOCX pour traitement par LLM
 import docx2txt
 from pathlib import Path
 from typing import Union
+from config.logging_config import setup_logger
+
+# Logger
+logger = setup_logger(__name__, 'docx_extractor.log')
 
 
 def extract_docx_content(docx_path: Union[str, Path]) -> str:
@@ -32,7 +36,7 @@ def extract_docx_content(docx_path: Union[str, Path]) -> str:
         raise ValueError(f"Le fichier doit être un DOCX ou DOC : {docx_path}")
     
     try:
-        print(f"📄 Extraction du contenu DOCX: {docx_path.name}")
+        logger.info(f"Extraction DOCX: {docx_path.name}")
         
         # Extraction du texte avec docx2txt
         text_content = docx2txt.process(str(docx_path))
@@ -40,12 +44,12 @@ def extract_docx_content(docx_path: Union[str, Path]) -> str:
         if not text_content or not text_content.strip():
             raise ValueError(f"Le fichier DOCX est vide ou illisible : {docx_path}")
         
-        print(f"  ✅ Extraction réussie : {len(text_content)} caractères")
+        logger.info(f"Extraction DOCX réussie: {len(text_content)} caractères")
         
         return text_content.strip()
         
     except Exception as e:
-        print(f"  ❌ Erreur lors de l'extraction DOCX : {str(e)}")
+        logger.error(f"Erreur extraction DOCX: {str(e)}", exc_info=True)
         raise Exception(f"Impossible d'extraire le texte du DOCX : {str(e)}")
 
 

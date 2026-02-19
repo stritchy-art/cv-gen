@@ -35,6 +35,13 @@ class TestPDFExtractor:
                 extract_pdf_content(tmp_path)
         finally:
             Path(tmp_path).unlink()
+    
+    def test_extract_pdf_with_metadata_file_not_found(self):
+        """Test extract_pdf_with_metadata avec fichier inexistant"""
+        from core.pdf_extractor import extract_pdf_with_metadata
+        
+        with pytest.raises(Exception):
+            extract_pdf_with_metadata("nonexistent.pdf")
 
 
 class TestDOCXExtractor:

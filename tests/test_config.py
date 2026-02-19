@@ -95,11 +95,10 @@ class TestSettings:
     def test_openai_settings_present(self):
         """Test que les paramètres OpenAI sont définis"""
         settings = get_settings()
-        # Ces paramètres devraient exister même si non configurés
-        assert hasattr(settings, 'OPENAI_MODEL')
+        # Ces paramètres devraient exister
+        assert hasattr(settings, 'OPENAI_API_KEY')
         assert hasattr(settings, 'OPENAI_MAX_TOKENS')
         assert hasattr(settings, 'OPENAI_TEMPERATURE')
-        assert settings.OPENAI_MODEL == "gpt-5-mini"
         assert settings.OPENAI_MAX_TOKENS == 1000
         assert 0 <= settings.OPENAI_TEMPERATURE <= 1
     

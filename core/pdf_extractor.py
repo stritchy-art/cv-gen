@@ -6,6 +6,10 @@ Extrait le texte et la structure d'un fichier PDF pour traitement par LLM
 import pdfplumber
 from pathlib import Path
 from typing import Union
+from config.logging_config import setup_logger
+
+# Logger
+logger = setup_logger(__name__, 'pdf_extractor.log')
 
 
 def extract_pdf_content(pdf_path: Union[str, Path]) -> str:
@@ -43,9 +47,9 @@ def extract_pdf_content(pdf_path: Union[str, Path]) -> str:
                 
                 if page_text:
                     text_content.append(page_text)
-                    print(f"  Page {i} : {len(page_text)} caractères extraits")
+                    logger.debug(f"Page {i}: {len(page_text)} caractères extraits")
                 else:
-                    print(f"  Page {i} : Aucun texte détecté")
+                    logger.warning(f"Page {i}: Aucun texte détecté")
         
         full_text = "\n\n".join(text_content)
         
