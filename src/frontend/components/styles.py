@@ -5,8 +5,9 @@ from components.translations import t
 
 
 def apply_custom_styles():
-    """Applique les styles CSS personnalisés """
-    st.markdown("""
+    """Applique les styles CSS personnalisés"""
+    st.markdown(
+        """
     <style>
         /* ===== Couleurs  ===== */
         :root {
@@ -336,7 +337,9 @@ def apply_custom_styles():
             animation: fadeIn 0.4s ease-out;
         }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_footer():
@@ -349,5 +352,5 @@ def render_footer():
             <p style='margin: 0; font-size: 14px;'>{t('footer_copyright')}</p>
         </div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )

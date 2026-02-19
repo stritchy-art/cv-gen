@@ -23,7 +23,7 @@ def sample_cv_data():
         "header": {
             "name": "Jean Dupont",
             "title": "Développeur Full Stack Senior",
-            "experience": "10 ans d'expérience"
+            "experience": "10 ans d'expérience",
         },
         "competences": {
             "operationnelles": [
@@ -31,36 +31,36 @@ def sample_cv_data():
                 "Architecture logicielle et design patterns",
                 "Gestion de projet agile (Scrum, Kanban)",
                 "Mentorat et formation d'équipes",
-                "Revue de code et bonnes pratiques"
+                "Revue de code et bonnes pratiques",
             ],
             "techniques": [
                 {
                     "category": "Langages",
-                    "items": ["Python", "JavaScript", "TypeScript", "Java", "SQL"]
+                    "items": ["Python", "JavaScript", "TypeScript", "Java", "SQL"],
                 },
                 {
                     "category": "Frameworks",
-                    "items": ["Django", "FastAPI", "React", "Vue.js", "Spring Boot"]
+                    "items": ["Django", "FastAPI", "React", "Vue.js", "Spring Boot"],
                 },
                 {
                     "category": "DevOps",
-                    "items": ["Docker", "Kubernetes", "CI/CD", "AWS", "Azure"]
+                    "items": ["Docker", "Kubernetes", "CI/CD", "AWS", "Azure"],
                 },
                 {
                     "category": "Bases de données",
-                    "items": ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch"]
-                }
-            ]
+                    "items": ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
+                },
+            ],
         },
         "formations": [
             {
                 "year": "2015",
-                "description": "Master Informatique, Spécialité Génie Logiciel - Université de Paris"
+                "description": "Master Informatique, Spécialité Génie Logiciel - Université de Paris",
             },
             {
                 "year": "2013",
-                "description": "Licence Informatique - Université de Lyon"
-            }
+                "description": "Licence Informatique - Université de Lyon",
+            },
         ],
         "experiences": [
             {
@@ -73,9 +73,9 @@ def sample_cv_data():
                     "Définition des standards techniques et des best practices",
                     "Mentorat de 5 développeurs juniors",
                     "Mise en place de l'intégration continue (CI/CD)",
-                    "Optimisation des performances et scalabilité"
+                    "Optimisation des performances et scalabilité",
                 ],
-                "tech_env": "Python, Django, FastAPI, React, PostgreSQL, Redis, Docker, Kubernetes, AWS"
+                "tech_env": "Python, Django, FastAPI, React, PostgreSQL, Redis, Docker, Kubernetes, AWS",
             },
             {
                 "company": "Digital Solutions (Lyon)",
@@ -86,9 +86,9 @@ def sample_cv_data():
                     "Développement full stack (Python/JavaScript)",
                     "Conception et modélisation de bases de données",
                     "Intégration de services externes (APIs REST)",
-                    "Participation aux phases de conception"
+                    "Participation aux phases de conception",
                 ],
-                "tech_env": "Python, Flask, Vue.js, PostgreSQL, Docker, GitLab CI"
+                "tech_env": "Python, Flask, Vue.js, PostgreSQL, Docker, GitLab CI",
             },
             {
                 "company": "StartupTech (Paris)",
@@ -98,12 +98,12 @@ def sample_cv_data():
                 "activities": [
                     "Développement de nouvelles fonctionnalités",
                     "Maintenance et debug de l'application",
-                    "Tests unitaires et intégration"
+                    "Tests unitaires et intégration",
                 ],
-                "tech_env": "Python, Django, JavaScript, MySQL"
-            }
+                "tech_env": "Python, Django, JavaScript, MySQL",
+            },
         ],
-        "pitch": "Développeur Full Stack passionné avec 10 ans d'expérience dans la conception et le développement d'applications web scalables. Expert en Python et JavaScript, avec une forte expertise en architecture microservices et DevOps. Capacité démontrée à mener des projets complexes et à encadrer des équipes techniques."
+        "pitch": "Développeur Full Stack passionné avec 10 ans d'expérience dans la conception et le développement d'applications web scalables. Expert en Python et JavaScript, avec une forte expertise en architecture microservices et DevOps. Capacité démontrée à mener des projets complexes et à encadrer des équipes techniques.",
     }
 
 
@@ -111,14 +111,10 @@ def sample_cv_data():
 def minimal_cv_data():
     """Fixture avec données CV minimales"""
     return {
-        "header": {
-            "name": "Test User",
-            "title": "Developer",
-            "experience": "3 ans"
-        },
+        "header": {"name": "Test User", "title": "Developer", "experience": "3 ans"},
         "competences": {},
         "formations": [],
-        "experiences": []
+        "experiences": [],
     }
 
 
@@ -129,7 +125,7 @@ def invalid_cv_data():
         "header": {},
         "competences": None,
         "formations": "invalid",
-        "experiences": None
+        "experiences": None,
     }
 
 
@@ -139,9 +135,5 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: marque les tests lents (nécessitant appel API, etc.)"
     )
-    config.addinivalue_line(
-        "markers", "integration: marque les tests d'intégration"
-    )
-    config.addinivalue_line(
-        "markers", "unit: marque les tests unitaires"
-    )
+    config.addinivalue_line("markers", "integration: marque les tests d'intégration")
+    config.addinivalue_line("markers", "unit: marque les tests unitaires")

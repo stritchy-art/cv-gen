@@ -8,10 +8,10 @@ from components.translations import t
 def check_api_health(api_url: str) -> bool:
     """
     Vérifie que l'API backend est accessible.
-    
+
     Args:
         api_url: URL de l'API
-        
+
     Returns:
         bool: True si l'API répond correctement, False sinon
     """

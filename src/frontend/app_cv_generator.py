@@ -24,15 +24,12 @@ from components.history import render_history_sidebar, get_cv_from_history
 from components.translations import t, render_language_selector
 from components.rate_calculator import display_rate_calculator
 
-
 # Configuration
 settings = get_settings()
 API_URL = f"http://localhost:{settings.API_PORT}"
 
 st.set_page_config(
-    page_title="Convertisseur CV PDF vers DOCX",
-    page_icon="📄",
-    layout="centered"
+    page_title="Convertisseur CV PDF vers DOCX", page_icon="📄", layout="centered"
 )
 
 # ==================== AUTHENTIFICATION ====================
@@ -63,34 +60,36 @@ if not display_api_status(API_URL):
 # Gérer la sélection depuis l'historique (sidebar)
 if selected_cv:
     st.info(t("history_loaded", filename=selected_cv))
-    
+
     # Récupérer les données de l'historique
     history_entry = get_cv_from_history(selected_cv)
-    
+
     if history_entry:
-        cv_data = history_entry.get('cv_data')
-        options = history_entry.get('options', {})
-        
+        cv_data = history_entry.get("cv_data")
+        options = history_entry.get("options", {})
+
         # Créer un résultat "synthétique" pour affichage
-        st.session_state['conversion_results'] = {
-            'all_results': [{
-                'filename': selected_cv.replace('.pdf', '.docx'),
-                'result': {
-                    'filename': selected_cv.replace('.pdf', '.docx'),
-                    'cv_data': cv_data,
-                    'pitch': options.get('pitch', ''),
-                    'processing_time': 0.0
-                },
-                'docx_content': None,  # Sera généré à la demande
-                'download_status': 200,
-                'success': True,
-                'from_history': True
-            }],
-            'total_files': 1,
-            'success_count': 1,
-            'generate_pitch': options.get('generate_pitch', True)
+        st.session_state["conversion_results"] = {
+            "all_results": [
+                {
+                    "filename": selected_cv.replace(".pdf", ".docx"),
+                    "result": {
+                        "filename": selected_cv.replace(".pdf", ".docx"),
+                        "cv_data": cv_data,
+                        "pitch": options.get("pitch", ""),
+                        "processing_time": 0.0,
+                    },
+                    "docx_content": None,  # Sera généré à la demande
+                    "download_status": 200,
+                    "success": True,
+                    "from_history": True,
+                }
+            ],
+            "total_files": 1,
+            "success_count": 1,
+            "generate_pitch": options.get("generate_pitch", True),
         }
-        
+
         st.success(t("history_loaded_success"))
         st.info(t("history_loaded_info"))
 
@@ -98,45 +97,50 @@ if selected_cv:
 uploaded_files = upload_cv_files(max_files=3)
 
 # Options de traitement
-generate_pitch, improvement_mode, job_offer_file, candidate_name, max_pages = render_processing_options()
+generate_pitch, improvement_mode, job_offer_file, candidate_name, max_pages = (
+    render_processing_options()
+)
 
 # Prévisualisation et conversion
 if uploaded_files:
     preview_pdf_files(uploaded_files)
-    
+
     # Sélection du modèle et bouton de conversion
     st.markdown("---")
     st.markdown(f"### {t('convert_section')}")
-    
+
     col1, col2 = st.columns([2, 3])
-    
+
     with col1:
         # Importer la configuration des modèles
         from config.settings import AVAILABLE_MODELS
-        
+
         # Créer la liste déroulante pour le modèle
         model_options = list(AVAILABLE_MODELS.keys())
-        model_labels = [AVAILABLE_MODELS[key]['name'] for key in model_options]
-        
+        model_labels = [AVAILABLE_MODELS[key]["name"] for key in model_options]
+
         selected_model_index = st.selectbox(
             t("select_model"),
             options=range(len(model_options)),
             format_func=lambda i: model_labels[i],
             index=1,  # gpt-4o-mini par défaut
-            help=t("select_model_help")
+            help=t("select_model_help"),
         )
-        
+
         selected_model_key = model_options[selected_model_index]
         model_info = AVAILABLE_MODELS[selected_model_key]
-        
+
         # Récupérer les textes traduits via les clés
-        performance_text = f"{model_info['performance']} {t(model_info['performance_key'])}"
+        performance_text = (
+            f"{model_info['performance']} {t(model_info['performance_key'])}"
+        )
         cost_text = f"{model_info['cost']} {t(model_info['cost_label_key'])}"
-        cost_details = t(model_info['cost_key'])
-        description = t(model_info['description_key'])
-        
+        cost_details = t(model_info["cost_key"])
+        description = t(model_info["description_key"])
+
         # Afficher les infos du modèle sélectionné
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px;'>
             <p style='margin: 0; font-size: 0.9em;'>
                 <strong>Performance:</strong> {performance_text}<br>
@@ -144,23 +148,28 @@ if uploaded_files:
                 <small>{description}</small>
             </p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """,
+            unsafe_allow_html=True,
+        )
+
     with col2:
         st.write("")  # Espaceur
         st.write("")  # Espaceur
-        button_text = t("convert_multiple", count=len(uploaded_files)) if len(uploaded_files) > 1 else t("convert_button")
-        convert_button = st.button(
-            button_text,
-            use_container_width=True,
-            type="primary"
+        button_text = (
+            t("convert_multiple", count=len(uploaded_files))
+            if len(uploaded_files) > 1
+            else t("convert_button")
         )
-    
+        convert_button = st.button(
+            button_text, use_container_width=True, type="primary"
+        )
+
     if convert_button:
         # Récupérer la langue courante pour la traduction du CV
         from components.translations import get_language
+
         current_language = get_language()
-        
+
         process_conversion(
             uploaded_files=uploaded_files,
             improvement_mode=improvement_mode,
@@ -170,18 +179,18 @@ if uploaded_files:
             candidate_name=candidate_name,
             max_pages=max_pages,
             target_language=current_language,
-            model=model_info['model_id']
+            model=model_info["model_id"],
         )
 
 # Afficher les résultats (persiste après download)
 display_results()
 
 # Calculateur de taux (affiché en permanence, mis à jour par les résultats CV)
-if st.session_state.get('conversion_results'):
+if st.session_state.get("conversion_results"):
     # Récupérer le dernier CV converti pour mettre à jour la suggestion
-    results = st.session_state['conversion_results']['all_results']
-    if results and results[-1].get('success'):
-        last_cv_data = results[-1]['result'].get('cv_data')
+    results = st.session_state["conversion_results"]["all_results"]
+    if results and results[-1].get("success"):
+        last_cv_data = results[-1]["result"].get("cv_data")
         display_rate_calculator(last_cv_data)
     else:
         display_rate_calculator()

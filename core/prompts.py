@@ -8,21 +8,19 @@ from typing import Optional
 
 class PromptTemplates:
     """Templates de prompts pour le LLM"""
-    
+
     # Mappage des langues
-    LANGUAGE_NAMES = {
-        'en': 'ANGLAIS',
-        'it': 'ITALIEN',
-        'es': 'ESPAGNOL'
-    }
-    
+    LANGUAGE_NAMES = {"en": "ANGLAIS", "it": "ITALIEN", "es": "ESPAGNOL"}
+
     @staticmethod
     def get_translation_instruction(target_language: Optional[str]) -> str:
         """Génère l'instruction de traduction si nécessaire"""
-        if not target_language or target_language == 'fr':
+        if not target_language or target_language == "fr":
             return ""
-        
-        lang_name = PromptTemplates.LANGUAGE_NAMES.get(target_language, target_language.upper())
+
+        lang_name = PromptTemplates.LANGUAGE_NAMES.get(
+            target_language, target_language.upper()
+        )
         return f"""
 🌐 TRADUCTION OBLIGATOIRE : TOUT le contenu du CV doit être traduit en {lang_name}.
 - Traduis TOUS les textes : titres de poste, descriptions d'activités, compétences, formations
@@ -30,17 +28,17 @@ class PromptTemplates:
 - Adapte les termes techniques au vocabulaire professionnel {lang_name.lower()}
 - Les dates restent au format d'origine
 """
-    
+
     @staticmethod
     def get_page_limitation_instruction(max_pages: Optional[int]) -> str:
         """Génère l'instruction de limitation de pages"""
         if not max_pages:
             return ""
-        
+
         max_activities_per_exp = 3 if max_pages <= 2 else 4
         max_skills_categories = 4 if max_pages <= 2 else 6
         max_skills_assessment = 8 if max_pages <= 2 else 10
-        
+
         return f"""
 🚨 CONTRAINTE ABSOLUE : Le CV final NE DOIT PAS dépasser {max_pages} page(s) au format DOCX.
 
@@ -76,7 +74,7 @@ STRATÉGIE DE RÉDUCTION INTELLIGENTE :
 
 ⚡ OBJECTIF : CV dense mais complet, avec TOUTES les expériences mais en version ultra-condensée.
 """
-    
+
     @staticmethod
     def get_base_prompt(improvement_mode: str, translation_instruction: str) -> str:
         """Génère le prompt de base selon le mode d'amélioration"""
@@ -94,17 +92,17 @@ RÈGLES IMPORTANTES POUR L'AMÉLIORATION CIBLÉE:
 - Si certaines compétences demandées sont présentes mais peu visibles, reformule pour les mettre en valeur
 
 Retourne un JSON structuré avec EXACTEMENT ce format :"""
-        
+
         elif improvement_mode == "basic":
             return f"""Tu es un expert en rédaction de CV professionnels. 
 Analyse le texte du CV suivant, AMÉLIORE le contenu (reformule, corrige les fautes, enrichis les descriptions, rends plus professionnel) et retourne un JSON structuré avec EXACTEMENT ce format :
 {translation_instruction}"""
-        
+
         else:  # none
             return f"""Tu es un expert en extraction de données de CV. 
 Analyse le texte du CV suivant et retourne un JSON structuré avec EXACTEMENT ce format :
 {translation_instruction}"""
-    
+
     @staticmethod
     def get_json_schema() -> str:
         """Retourne le schéma JSON attendu"""
@@ -163,9 +161,11 @@ RÈGLES IMPORTANTES :
 - Pour les compétences techniques, groupe-les par catégorie (ex: "Virtualisation", "Base de données", "Stack DevOps", etc.) avec "category" et "items" comme array
 - Extrais TOUTES les informations présentes dans le CV
 """
-    
+
     @staticmethod
-    def get_improvement_rules(improvement_mode: str, job_offer_content: Optional[str]) -> str:
+    def get_improvement_rules(
+        improvement_mode: str, job_offer_content: Optional[str]
+    ) -> str:
         """Retourne les règles d'amélioration selon le mode"""
         if improvement_mode == "targeted" and job_offer_content:
             return f"""
@@ -180,7 +180,7 @@ INSTRUCTIONS D'AMÉLIORATION CIBLÉE:
 - Restructure les informations pour maximiser la pertinence vis-à-vis de la mission
 - RESTE FACTUEL : ne mens jamais, n'invente pas de compétences ou d'expériences
 """
-        
+
         elif improvement_mode == "basic":
             return """
 - AMÉLIORE le contenu : reformule les phrases pour les rendre plus professionnelles, corrige les fautes, enrichis les descriptions
@@ -188,14 +188,14 @@ INSTRUCTIONS D'AMÉLIORATION CIBLÉE:
 - Rends le vocabulaire plus technique et professionnel
 - Corrige toutes les fautes d'orthographe et de grammaire
 """
-        
+
         else:  # none
             return """
 - Préserve le formatage, les majuscules et la ponctuation originaux
 - NE MODIFIE PAS le contenu, extrais-le fidèlement tel quel
 - Ne corrige PAS les fautes, ne reformule PAS les phrases
 """
-    
+
     @staticmethod
     def build_cv_extraction_prompt(
         pdf_text: str,
@@ -203,22 +203,32 @@ INSTRUCTIONS D'AMÉLIORATION CIBLÉE:
         improvement_mode: str,
         job_offer_content: Optional[str] = None,
         max_pages: Optional[int] = None,
-        target_language: Optional[str] = None
+        target_language: Optional[str] = None,
     ) -> str:
         """Construit le prompt complet pour l'extraction de CV"""
-        
+
         # Déterminer le mode effectif
-        effective_mode = improvement_mode if (improve_content or improvement_mode != "none") else "none"
+        effective_mode = (
+            improvement_mode
+            if (improve_content or improvement_mode != "none")
+            else "none"
+        )
         if effective_mode == "targeted" and not job_offer_content:
             effective_mode = "basic" if improve_content else "none"
-        
+
         # Construire le prompt
-        translation_instruction = PromptTemplates.get_translation_instruction(target_language)
-        base_prompt = PromptTemplates.get_base_prompt(effective_mode, translation_instruction)
+        translation_instruction = PromptTemplates.get_translation_instruction(
+            target_language
+        )
+        base_prompt = PromptTemplates.get_base_prompt(
+            effective_mode, translation_instruction
+        )
         page_limitation = PromptTemplates.get_page_limitation_instruction(max_pages)
         json_schema = PromptTemplates.get_json_schema()
-        improvement_rules = PromptTemplates.get_improvement_rules(effective_mode, job_offer_content)
-        
+        improvement_rules = PromptTemplates.get_improvement_rules(
+            effective_mode, job_offer_content
+        )
+
         final_prompt = f"""{base_prompt}
 {page_limitation}
 {json_schema}
@@ -227,20 +237,19 @@ INSTRUCTIONS D'AMÉLIORATION CIBLÉE:
 
 Texte du CV :
 {pdf_text}"""
-        
+
         return final_prompt
-    
+
     @staticmethod
     def build_pitch_prompt(
-        cv_data: dict,
-        job_offer_content: Optional[str] = None
+        cv_data: dict, job_offer_content: Optional[str] = None
     ) -> str:
         """Construit le prompt pour la génération de pitch"""
-        
-        header = cv_data.get('header', {})
-        competences = cv_data.get('competences', {})
-        experiences = cv_data.get('experiences', [])
-        
+
+        header = cv_data.get("header", {})
+        competences = cv_data.get("competences", {})
+        experiences = cv_data.get("experiences", [])
+
         # Préparer le contexte
         context = f"""
 Profil : {header.get('name', '')}
@@ -253,7 +262,7 @@ Expériences récentes :
 """
         for exp in experiences[:3]:  # 3 premières expériences
             context += f"- {exp.get('company', '')} : {exp.get('title', '')}\n"
-        
+
         # Prompt selon contexte
         if job_offer_content:
             return f"""Tu es un consultant RH expert. Rédige un pitch professionnel et concis (150-200 mots maximum) pour présenter ce candidat à un client DANS LE CONTEXTE DE L'APPEL D'OFFRES CI-DESSOUS.
@@ -273,7 +282,7 @@ Appel d'offres / Mission :
 {job_offer_content[:2000]}
 
 Rédige le pitch directement, sans introduction ni conclusion. Concentre-toi sur l'adéquation entre le profil et la mission."""
-        
+
         else:
             return f"""Tu es un consultant RH expert. Rédige un pitch professionnel et concis (150-200 mots maximum) pour présenter ce candidat à un client.
 

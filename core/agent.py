@@ -27,7 +27,7 @@ import docx2txt
 load_dotenv()
 
 # Logger
-logger = setup_logger(__name__, 'agent.log')
+logger = setup_logger(__name__, "agent.log")
 
 # Cache global avec TTL de 15 jours (en secondes)
 CACHE_DIR = Path(__file__).parent.parent / "cache" / "llm_responses"
@@ -35,11 +35,12 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 llm_cache = Cache(str(CACHE_DIR))
 CACHE_TTL = 15 * 24 * 60 * 60  # 15 jours en secondes
 
+
 class CVConverterAgent:
     def __init__(self):
         """
         Initialise l'agent avec OpenAI
-        
+
         Variables d'environnement requises:
             OPENAI_API_KEY: Clé API OpenAI
             OPENAI_MODEL: Nom du modèle (optionnel, défaut: gpt-5-mini)
@@ -48,73 +49,90 @@ class CVConverterAgent:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("Variable d'environnement OPENAI_API_KEY requise")
-        
+
         self.client = OpenAI(api_key=api_key)
-        
+
         # Modèle par défaut ou personnalisé
         self.model = os.getenv("OPENAI_MODEL", "gpt-5-mini")
-    
-    def _generate_cache_key(self, pdf_content: str, improve_content: bool, improvement_mode: str, job_offer_content: Optional[str] = None) -> str:
+
+    def _generate_cache_key(
+        self,
+        pdf_content: str,
+        improve_content: bool,
+        improvement_mode: str,
+        job_offer_content: Optional[str] = None,
+    ) -> str:
         """Génère une clé de cache unique basée sur le contenu et les options
-        
+
         Args:
             pdf_content: Contenu du PDF
             improve_content: Amélioration activée ou non
             improvement_mode: Mode d'amélioration
             job_offer_content: Contenu de l'appel d'offres (optionnel)
-            
+
         Returns:
             str: Clé de cache unique
         """
         # Créer un hash du contenu du PDF
         content_hash = hashlib.sha256(pdf_content.encode()).hexdigest()[:16]
-        
+
         # Ajouter le hash de l'appel d'offres si présent
         job_hash = ""
         if job_offer_content:
             job_hash = "_" + hashlib.sha256(job_offer_content.encode()).hexdigest()[:8]
-        
+
         # Clé composite
         cache_key = f"cv_{content_hash}_{improvement_mode}_{improve_content}{job_hash}"
         return cache_key
-    
+
     def extract_job_offer_content(self, job_offer_path: str) -> str:
         """Extrait le contenu d'un appel d'offres (PDF, DOCX ou TXT)
-        
+
         Args:
             job_offer_path: Chemin vers le fichier de l'appel d'offres
-            
+
         Returns:
             str: Contenu textuel de l'appel d'offres
         """
         file_path = Path(job_offer_path)
-        
+
         if not file_path.exists():
-            raise FileNotFoundError(f"Fichier d'appel d'offres introuvable: {job_offer_path}")
-        
+            raise FileNotFoundError(
+                f"Fichier d'appel d'offres introuvable: {job_offer_path}"
+            )
+
         extension = file_path.suffix.lower()
-        
+
         try:
-            if extension == '.pdf':
+            if extension == ".pdf":
                 content = extract_pdf_content(job_offer_path)
-            elif extension in ['.docx', '.doc']:
+            elif extension in [".docx", ".doc"]:
                 content = docx2txt.process(job_offer_path)
-            elif extension == '.txt':
-                with open(job_offer_path, 'r', encoding='utf-8') as f:
+            elif extension == ".txt":
+                with open(job_offer_path, "r", encoding="utf-8") as f:
                     content = f.read()
             else:
                 raise ValueError(f"Format de fichier non supporté: {extension}")
-            
+
             logger.info(f"Appel d'offres extrait: {len(content)} caractères")
             return content
-            
+
         except Exception as e:
             logger.error(f"Erreur lors de l'extraction de l'appel d'offres: {e}")
             raise
-    
-    def extract_structured_data_with_llm(self, pdf_text: str, improve_content: bool = False, improvement_mode: str = "none", job_offer_content: Optional[str] = None, max_pages: Optional[int] = None, target_language: Optional[str] = None, model: str = "gpt-4o-mini") -> dict:
+
+    def extract_structured_data_with_llm(
+        self,
+        pdf_text: str,
+        improve_content: bool = False,
+        improvement_mode: str = "none",
+        job_offer_content: Optional[str] = None,
+        max_pages: Optional[int] = None,
+        target_language: Optional[str] = None,
+        model: str = "gpt-4o-mini",
+    ) -> dict:
         """Utilise le LLM pour extraire les données structurées du CV
-        
+
         Args:
             pdf_text: Texte extrait du PDF
             improve_content: Si True, le LLM peut améliorer le contenu
@@ -123,19 +141,21 @@ class CVConverterAgent:
             max_pages: Nombre maximum de pages (optionnel)
             target_language: Langue cible pour la traduction (optionnel: en, it, es)
             model: Modèle OpenAI à utiliser
-            
+
         Returns:
             dict: Données structurées du CV
         """
         # Vérifier le cache
-        cache_key = self._generate_cache_key(pdf_text, improve_content, improvement_mode, job_offer_content)
-        
+        cache_key = self._generate_cache_key(
+            pdf_text, improve_content, improvement_mode, job_offer_content
+        )
+
         if cache_key in llm_cache:
             logger.info("Données trouvées dans le cache (pas d'appel LLM)")
             return llm_cache[cache_key]
-        
+
         logger.info("Données non trouvées dans le cache, appel du LLM...")
-        
+
         # Construire le prompt avec le template centralisé
         prompt = PromptTemplates.build_cv_extraction_prompt(
             pdf_text=pdf_text,
@@ -143,87 +163,115 @@ class CVConverterAgent:
             improvement_mode=improvement_mode,
             job_offer_content=job_offer_content,
             max_pages=max_pages,
-            target_language=target_language
+            target_language=target_language,
         )
-        
+
         try:
             response = self.client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": "Tu es un assistant spécialisé dans l'extraction de données structurées à partir de CV. Tu retournes uniquement du JSON valide."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "Tu es un assistant spécialisé dans l'extraction de données structurées à partir de CV. Tu retournes uniquement du JSON valide.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
-            
+
             json_response = response.choices[0].message.content
             cv_data = json.loads(json_response)
-            
+
             # Stocker dans le cache avec TTL de 15 jours
             llm_cache.set(cache_key, cv_data, expire=CACHE_TTL)
-            
+
             logger.info("Extraction structurée réussie via LLM (mis en cache)")
             return cv_data
-            
+
         except Exception as e:
             logger.error(f"Erreur lors de l'extraction structurée: {e}", exc_info=True)
             raise
-    
-    def generate_profile_pitch(self, cv_data, job_offer_content=None, model="gpt-4o-mini"):
+
+    def generate_profile_pitch(
+        self, cv_data, job_offer_content=None, model="gpt-4o-mini"
+    ):
         """Génère un pitch de profil pour présenter le candidat à un client
-        
+
         Args:
             cv_data: Données structurées du CV
             job_offer_content: Contenu de l'appel d'offres (optionnel, pour pitch ciblé)
             model: Modèle OpenAI à utiliser
-            
+
         Returns:
             str: Pitch de présentation du profil
         """
         # Générer une clé de cache pour le pitch
         cache_data = json.dumps(cv_data, sort_keys=True)
         cache_key_input = cache_data + (job_offer_content or "")
-        pitch_cache_key = "pitch_" + hashlib.sha256(cache_key_input.encode()).hexdigest()[:24]
-        
+        pitch_cache_key = (
+            "pitch_" + hashlib.sha256(cache_key_input.encode()).hexdigest()[:24]
+        )
+
         # Vérifier le cache
         cached_pitch = llm_cache.get(pitch_cache_key)
         if cached_pitch:
             logger.info("Pitch récupéré depuis le cache")
             return cached_pitch
-        
+
         # Construire le prompt avec le template centralisé
         prompt = PromptTemplates.build_pitch_prompt(cv_data, job_offer_content)
-        
+
         try:
             logger.info("Génération du pitch via OpenAI API...")
             response = self.client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": "Tu es un consultant RH expert en rédaction de présentations professionnelles."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "Tu es un consultant RH expert en rédaction de présentations professionnelles.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
-                max_completion_tokens=1000
+                max_completion_tokens=1000,
             )
-            
-            pitch = response.choices[0].message.content.strip() if response.choices[0].message.content else ""
-            
+
+            pitch = (
+                response.choices[0].message.content.strip()
+                if response.choices[0].message.content
+                else ""
+            )
+
             if not pitch:
-                logger.warning(f"Pitch vide! finish_reason: {response.choices[0].finish_reason}, modèle: {model}")
+                logger.warning(
+                    f"Pitch vide! finish_reason: {response.choices[0].finish_reason}, modèle: {model}"
+                )
                 return None
-            
+
             # Mettre en cache le pitch généré
             llm_cache.set(pitch_cache_key, pitch, expire=CACHE_TTL)
             logger.info("Pitch généré et mis en cache")
-            
+
             return pitch
-            
+
         except Exception as e:
             logger.error(f"Erreur lors de la génération du pitch: {e}", exc_info=True)
             return None
-    
-    def process_cv(self, pdf_path, output_path=None, generate_pitch=True, improve_content=False, improvement_mode="none", job_offer_path=None, candidate_name=None, max_pages=None, target_language=None, model="gpt-4o-mini"):
+
+    def process_cv(
+        self,
+        pdf_path,
+        output_path=None,
+        generate_pitch=True,
+        improve_content=False,
+        improvement_mode="none",
+        job_offer_path=None,
+        candidate_name=None,
+        max_pages=None,
+        target_language=None,
+        model="gpt-4o-mini",
+    ):
         """Traite un CV (PDF ou DOCX) et génère un fichier DOCX formaté
-        
+
         Args:
             pdf_path: Chemin vers le fichier CV d'entrée (PDF ou DOCX)
             output_path: Chemin vers le fichier DOCX de sortie (optionnel)
@@ -235,87 +283,111 @@ class CVConverterAgent:
             max_pages: Nombre maximum de pages (optionnel)
             target_language: Langue cible pour la traduction (optionnel: fr, en, it, es)
             model: Modèle OpenAI à utiliser (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
-            
+
         Returns:
             Tuple[str, dict]: Chemin du fichier DOCX généré et données structurées du CV
         """
         print(f"\n{'='*60}")
         print(f"Traitement du CV : {Path(pdf_path).name}")
         print(f"{'='*60}\n")
-        
+
         # Détecter le type de fichier
         input_file = Path(pdf_path)
         file_extension = input_file.suffix.lower()
-        
+
         # Étape 1 : Extraction du contenu
         print(f"Étape 1/3 : Extraction du contenu {file_extension.upper()}...")
-        
-        if file_extension == '.pdf':
+
+        if file_extension == ".pdf":
             cv_text = extract_pdf_content(pdf_path)
-        elif file_extension in ['.docx', '.doc']:
+        elif file_extension in [".docx", ".doc"]:
             cv_text = extract_docx_content(pdf_path)
         else:
-            raise ValueError(f"Format de fichier non supporté: {file_extension}. Formats acceptés: PDF, DOCX, DOC")
-        
+            raise ValueError(
+                f"Format de fichier non supporté: {file_extension}. Formats acceptés: PDF, DOCX, DOC"
+            )
+
         if not cv_text or len(cv_text.strip()) < 100:
             raise ValueError("Le contenu extrait du CV est insuffisant ou vide")
-        
+
         print(f"✓ {len(cv_text)} caractères extraits\n")
-        
+
         # Étape optionnelle : Extraction de l'appel d'offres
         job_offer_content = None
         if improvement_mode == "targeted" and job_offer_path:
             print("Extraction de l'appel d'offres...")
             job_offer_content = self.extract_job_offer_content(job_offer_path)
             print()
-        
+
         # Étape 2 : Traitement par LLM
         print("Étape 2/4 : Analyse et structuration via LLM...")
-        if target_language and target_language != 'fr':
-            language_names = {'en': 'Anglais', 'it': 'Italien', 'es': 'Espagnol'}
-            print(f"🌐 TRADUCTION ACTIVÉE : Le CV sera traduit en {language_names.get(target_language, target_language.upper())}")
+        if target_language and target_language != "fr":
+            language_names = {"en": "Anglais", "it": "Italien", "es": "Espagnol"}
+            print(
+                f"🌐 TRADUCTION ACTIVÉE : Le CV sera traduit en {language_names.get(target_language, target_language.upper())}"
+            )
         if max_pages:
-            print(f"🚨 MODE RÉDUCTION ACTIVÉ : CV limité à {max_pages} page(s) maximum !")
+            print(
+                f"🚨 MODE RÉDUCTION ACTIVÉ : CV limité à {max_pages} page(s) maximum !"
+            )
         if improvement_mode == "targeted":
-            print("🎯 Mode amélioration ciblée activé - Le CV sera adapté à l'appel d'offres")
+            print(
+                "🎯 Mode amélioration ciblée activé - Le CV sera adapté à l'appel d'offres"
+            )
         elif improve_content or improvement_mode == "basic":
-            print("⚠️  Mode amélioration basique activé - Le LLM va améliorer le contenu")
-        cv_data = self.extract_structured_data_with_llm(cv_text, improve_content=improve_content, improvement_mode=improvement_mode, job_offer_content=job_offer_content, max_pages=max_pages, target_language=target_language, model=model)
+            print(
+                "⚠️  Mode amélioration basique activé - Le LLM va améliorer le contenu"
+            )
+        cv_data = self.extract_structured_data_with_llm(
+            cv_text,
+            improve_content=improve_content,
+            improvement_mode=improvement_mode,
+            job_offer_content=job_offer_content,
+            max_pages=max_pages,
+            target_language=target_language,
+            model=model,
+        )
         print()
-        
+
         # Remplacer le nom si candidate_name est fourni
         if candidate_name:
             print(f"📝 Remplacement du nom par: {candidate_name}")
-            if 'header' not in cv_data:
-                cv_data['header'] = {}
-            cv_data['header']['name'] = candidate_name
-        
+            if "header" not in cv_data:
+                cv_data["header"] = {}
+            cv_data["header"]["name"] = candidate_name
+
         # Étape 3 : Génération du DOCX
         print("Étape 3/4 : Génération du fichier Word...")
-        
+
         if output_path is None:
             # Utiliser le nom du candidat (fourni ou extrait) pour le fichier
-            person_name = cv_data.get('header', {}).get('name', '')
+            person_name = cv_data.get("header", {}).get("name", "")
             if person_name:
                 # Nettoyer le nom pour un nom de fichier valide
-                safe_name = "".join(c for c in person_name if c.isalnum() or c in (' ', '-', '_')).strip()
-                safe_name = safe_name.replace(' ', '_')
+                safe_name = "".join(
+                    c for c in person_name if c.isalnum() or c in (" ", "-", "_")
+                ).strip()
+                safe_name = safe_name.replace(" ", "_")
                 output_path = Path(pdf_path).parent / f"{safe_name}_CV.docx"
             else:
                 # Fallback : utiliser le nom du fichier PDF original
                 input_name = Path(pdf_path).stem
                 output_path = Path(pdf_path).parent / f"{input_name}_converti.docx"
-        
+
         # Générer le DOCX avec la langue cible
-        output_file = generate_docx_from_cv_data(cv_data, output_path, target_language=target_language)
+        output_file = generate_docx_from_cv_data(
+            cv_data, output_path, target_language=target_language
+        )
         print()
-        
+
         # Étape 4 : Génération du pitch de profil (optionnel)
         pitch = None
         if generate_pitch:
             print("Étape 4/4 : Génération du pitch de présentation...")
             # Passer le contenu de l'appel d'offres si disponible pour un pitch ciblé
-            pitch = self.generate_profile_pitch(cv_data, job_offer_content=job_offer_content, model=model)
+            pitch = self.generate_profile_pitch(
+                cv_data, job_offer_content=job_offer_content, model=model
+            )
             if pitch:
                 print(f"✓ Pitch généré ({len(pitch)} caractères)")
                 if job_offer_content:
@@ -325,49 +397,47 @@ class CVConverterAgent:
                 print("✗ Échec de la génération du pitch\n")
         else:
             print("Étape 4/4 : Génération du pitch ignorée (option désactivée)\n")
-        
+
         # Ajouter le pitch aux données CV pour le retour
         if pitch:
-            cv_data['pitch'] = pitch
-        
+            cv_data["pitch"] = pitch
+
         print(f"\n{'='*60}")
         print(f"✓ Conversion terminée avec succès !")
         print(f"Fichier généré : {output_file}")
         print(f"{'='*60}\n")
-        
+
         return str(output_file), cv_data
 
 
 def main():
     """Fonction principale pour l'exécution en ligne de commande"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         description="Convertit un CV PDF en fichier Word formaté via LLM"
     )
+    parser.add_argument("pdf_path", help="Chemin vers le fichier PDF à convertir")
     parser.add_argument(
-        "pdf_path",
-        help="Chemin vers le fichier PDF à convertir"
-    )
-    parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         help="Chemin du fichier DOCX de sortie (optionnel)",
-        default=None
+        default=None,
     )
-    
+
     args = parser.parse_args()
-    
+
     # Vérification du fichier d'entrée
     if not Path(args.pdf_path).exists():
         print(f"✗ Erreur : Le fichier '{args.pdf_path}' n'existe pas")
         return 1
-    
+
     try:
         # Création de l'agent et traitement
         agent = CVConverterAgent()
         agent.process_cv(args.pdf_path, args.output)
         return 0
-        
+
     except Exception as e:
         print(f"\n✗ Erreur durant le traitement : {e}")
         return 1

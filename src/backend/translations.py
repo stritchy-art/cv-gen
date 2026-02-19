@@ -12,7 +12,6 @@ TRANSLATIONS = {
         "api_description": "API to convert PDF CVs to DOCX with LLM-assisted extraction",
         "api_root_description": "Root endpoint",
         "api_health_description": "API health check",
-        
         # Endpoint descriptions
         "file_description": "CV file (PDF or DOCX) to convert",
         "improvement_mode_description": "Improvement mode: none, basic, targeted",
@@ -22,12 +21,10 @@ TRANSLATIONS = {
         "target_language_description": "Target translation language (fr, en, it, es)",
         "file_pdf_description": "PDF CV file to convert",
         "job_offer_targeted_description": "Job offer for targeted improvement",
-        
         # Docstrings
         "convert_cv_doc": "Convert a CV (PDF or DOCX) to a formatted DOCX.",
         "convert_download_doc": "Convert a PDF CV to DOCX and return the file.",
         "download_cache_doc": "Download from cache (no reconversion)",
-        
         # Error messages
         "error_file_must_be_pdf": "The file must be a PDF",
         "error_invalid_improvement_mode": "Invalid improvement mode. Possible values: {values}",
@@ -37,7 +34,6 @@ TRANSLATIONS = {
         "error_internal": "Internal error: {error}",
         "error_conversion_expired": "Conversion expired or not found",
         "error_file_not_found": "Generated file not found",
-        
         # Class docstrings
         "improvement_mode_doc": "Content improvement modes",
     },
@@ -46,7 +42,6 @@ TRANSLATIONS = {
         "api_description": "API de conversion de CV PDF vers DOCX avec extraction intelligente par LLM",
         "api_root_description": "Point d'entrée racine",
         "api_health_description": "Vérification de santé de l'API",
-        
         # Endpoint descriptions
         "file_description": "Fichier CV (PDF ou DOCX) à convertir",
         "improvement_mode_description": "Mode d'amélioration: none, basic, targeted",
@@ -56,12 +51,10 @@ TRANSLATIONS = {
         "target_language_description": "Langue cible pour la traduction (fr, en, it, es)",
         "file_pdf_description": "Fichier PDF du CV à convertir",
         "job_offer_targeted_description": "Appel d'offres pour amélioration ciblée",
-        
         # Docstrings
         "convert_cv_doc": "Convertit un CV (PDF ou DOCX) en DOCX formaté.",
         "convert_download_doc": "Convertit un CV PDF en DOCX et retourne le fichier.",
         "download_cache_doc": "Téléchargement depuis le cache (pas de reconversion)",
-        
         # Error messages
         "error_file_must_be_pdf": "Le fichier doit être un PDF",
         "error_invalid_improvement_mode": "Mode d'amélioration invalide. Valeurs possibles: {values}",
@@ -71,32 +64,31 @@ TRANSLATIONS = {
         "error_internal": "Erreur interne: {error}",
         "error_conversion_expired": "Conversion expirée ou introuvable",
         "error_file_not_found": "Fichier généré introuvable",
-        
         # Class docstrings
         "improvement_mode_doc": "Modes d'amélioration du contenu",
-    }
+    },
 }
 
 
 def t(key: str, lang: str = DEFAULT_LANGUAGE, **kwargs) -> str:
     """
     Get translation for a given key in the specified language.
-    
+
     Args:
         key: Translation key
         lang: Language code (en, fr, etc.)
         **kwargs: Variables to format in the translation
-        
+
     Returns:
         Translated text
     """
     text = TRANSLATIONS.get(lang, TRANSLATIONS[DEFAULT_LANGUAGE]).get(key, key)
-    
+
     # Format variables if present
     if kwargs:
         try:
             text = text.format(**kwargs)
         except KeyError:
             pass
-    
+
     return text

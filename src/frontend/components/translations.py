@@ -15,19 +15,16 @@ TRANSLATIONS = {
         "contact_admin": "💡 Contactez l'administrateur pour obtenir vos identifiants",
         "connected_as": "👤 Connecté en tant que:",
         "logout": "🚪 Se déconnecter",
-        
         # Titre et navigation
         "app_title": "Convertisseur CV",
         "language": "🌐 Langue",
-        
         # API Status
         "api_connected": "✅ API Backend connectée",
         "api_error": "❌ API Backend non disponible. Assurez-vous que le serveur FastAPI est lancé.",
         "api_command": "Commande: `python src/backend/api.py` ou `uvicorn src.backend.api:app --reload`",
-        
         # Upload
-    "upload_title": "Choisissez un ou plusieurs CV (PDF ou DOCX, maximum 3)",
-    "upload_help": "Sélectionnez jusqu'à 3 fichiers CV à convertir simultanément",
+        "upload_title": "Choisissez un ou plusieurs CV (PDF ou DOCX, maximum 3)",
+        "upload_help": "Sélectionnez jusqu'à 3 fichiers CV à convertir simultanément",
         "files_selected": "📊 {count} fichier(s) sélectionné(s)",
         "max_files_error": "❌ Vous ne pouvez télécharger que 3 CV maximum à la fois.",
         "max_files_warning": "⚠️ Seuls les 3 premiers fichiers seront traités.",
@@ -35,7 +32,6 @@ TRANSLATIONS = {
         "preview_pdfs": "📄 Prévisualisation des PDF",
         "files_selected_list": "**Fichiers sélectionnés :**",
         "choose_preview": "🔍 Choisir un PDF à prévisualiser :",
-        
         # Options
         "processing_options": "⚙️ Options de traitement",
         "candidate_name": "Nom du candidat (optionnel)",
@@ -60,7 +56,6 @@ TRANSLATIONS = {
         "max_pages_choice": "Nombre de pages maximum :",
         "max_pages_warning": "⚠️ ATTENTION : Le contenu sera automatiquement réduit et certaines informations seront supprimées pour respecter la limite de {pages} page(s) !",
         "max_pages_alert": "🚨 MODE RÉDUCTION ACTIVÉ",
-        
         # Calculateur de taux
         "rate_calculator_title": "💰 Calculateur de Taux et Marge sur Coût Direct",
         "rate_suggestion": "💡 Suggestion basée sur {years} ans d'expérience : **{rate}€/jour**",
@@ -85,17 +80,14 @@ TRANSLATIONS = {
         "calculation_details": "📋 Détails du calcul",
         "margin": "Marge brute",
         "mcd_formula": "Formule MCD",
-        
         # Conversion
         "convert_section": "🚀 Génération du CV",
         "select_model": "Modèle IA à utiliser",
         "select_model_help": "Choisissez le modèle OpenAI pour générer votre CV. Les modèles plus performants produisent de meilleurs résultats mais coûtent plus cher.",
-        
         # Modèles IA - Performance
         "model_perf_excellent": "Excellent",
         "model_perf_very_good": "Très bon",
         "model_perf_good": "Bon",
-        
         # Modèles IA - Coût
         "model_cost_high": "~0,03$/CV généré",
         "model_cost_medium": "~0,003$/CV généré",
@@ -103,12 +95,10 @@ TRANSLATIONS = {
         "model_cost_label_high": "Élevé",
         "model_cost_label_medium": "Économique",
         "model_cost_label_low": "Très économique",
-        
         # Modèles IA - Descriptions
         "model_gpt4o_desc": "Modèle le plus performant. Meilleure qualité de génération et compréhension. Recommandé pour les CV critiques.",
         "model_gpt5mini_desc": "Bon équilibre performance/coût. Qualité élevée à prix réduit. Recommandé pour un usage quotidien.",
         "model_gpt35_desc": "Modèle rapide et économique. Qualité correcte pour des CV standards. Idéal pour tests et volumes importants.",
-        
         "convert_button": "🚀 Convertir",
         "convert_multiple": "🚀 Convertir {count} CV",
         "processing_cv": "📄 Traitement du CV {current}/{total}: {filename}",
@@ -117,7 +107,6 @@ TRANSLATIONS = {
         "connection_error": "❌ Erreur de connexion à l'API",
         "error": "❌ Erreur: {error}",
         "unknown_error": "Erreur inconnue",
-        
         # Résultats
         "results_title": "📊 Résultats",
         "results_success": "✅ {success}/{total} CV converti(s) avec succès",
@@ -140,14 +129,13 @@ TRANSLATIONS = {
         "status_success": "✅ Succès",
         "skills_title": "🎯 Compétences et Niveau de Maîtrise",
         "skills_empty": "Aucune évaluation de compétences disponible",
-        
         # Section Info
         "info_title": "ℹ️ Informations",
         "info_how_to": "### Comment utiliser cet outil ?",
-        "info_step1": "1. **Chargez votre CV** : Cliquez sur \"Browse files\" et sélectionnez votre CV au format PDF ou DOCX",
+        "info_step1": '1. **Chargez votre CV** : Cliquez sur "Browse files" et sélectionnez votre CV au format PDF ou DOCX',
         "info_step2": "2. **Configurez les options** : Choisissez si vous souhaitez générer un pitch et/ou améliorer le contenu",
-        "info_step3": "3. **Lancez la conversion** : Cliquez sur le bouton \"🚀 Convertir\"",
-        "info_step4": "4. **Téléchargez le résultat** : Une fois la conversion terminée, cliquez sur \"📥 Télécharger\"",
+        "info_step3": '3. **Lancez la conversion** : Cliquez sur le bouton "🚀 Convertir"',
+        "info_step4": '4. **Téléchargez le résultat** : Une fois la conversion terminée, cliquez sur "📥 Télécharger"',
         "info_modes_title": "### Modes d'amélioration",
         "info_mode_none": "- **Aucune** : Extraction fidèle du contenu original",
         "info_mode_basic": "- **Basique** : Amélioration de la formulation, correction des fautes, enrichissement du vocabulaire",
@@ -162,7 +150,6 @@ TRANSLATIONS = {
         "info_feature7": "- ✅ Évaluation automatique des compétences",
         "info_architecture_title": "### Architecture",
         "info_architecture": "- **Backend**: FastAPI (API REST)\n- **Frontend**: Streamlit\n- **IA**: OpenAI GPT-5-mini",
-        
         # Historique
         "history_title": "📚 Historique des CV",
         "history_empty": "Aucun CV dans l'historique",
@@ -177,18 +164,16 @@ TRANSLATIONS = {
         "history_loaded": "🔄 Régénération du CV depuis l'historique : **{filename}**",
         "history_loaded_success": "✅ CV chargé depuis l'historique !",
         "history_loaded_info": "💡 Vous pouvez maintenant télécharger le DOCX en cliquant sur le bouton ci-dessous",
-        
         # Footer
         "footer_company": "",
         "footer_copyright": "© 2026 - CV Generator v1.0",
-        
         # Info section
         "info_title": "ℹ️ Informations",
         "info_how_to": "### Comment utiliser cet outil ?",
-        "info_step1": "1. **Chargez votre CV** : Cliquez sur \"Browse files\" et sélectionnez votre CV au format PDF",
+        "info_step1": '1. **Chargez votre CV** : Cliquez sur "Browse files" et sélectionnez votre CV au format PDF',
         "info_step2": "2. **Configurez les options** : Choisissez si vous souhaitez générer un pitch et/ou améliorer le contenu",
-        "info_step3": "3. **Lancez la conversion** : Cliquez sur le bouton \"🚀 Convertir\"",
-        "info_step4": "4. **Téléchargez le résultat** : Une fois la conversion terminée, cliquez sur \"📥 Télécharger\"",
+        "info_step3": '3. **Lancez la conversion** : Cliquez sur le bouton "🚀 Convertir"',
+        "info_step4": '4. **Téléchargez le résultat** : Une fois la conversion terminée, cliquez sur "📥 Télécharger"',
         "info_features": "### Caractéristiques",
         "info_feature1": "✅ Extraction intelligente avec IA (GPT-5-mini)",
         "info_feature2": "✅ Formatage professionnel automatique",
@@ -207,16 +192,13 @@ TRANSLATIONS = {
         "contact_admin": "💡 Contact the administrator to get your credentials",
         "connected_as": "👤 Connected as:",
         "logout": "🚪 Logout",
-        
         # Title and navigation
         "app_title": "CV Converter",
         "language": "🌐 Language",
-        
         # API Status
         "api_connected": "✅ Backend API connected",
         "api_error": "❌ Backend API unavailable. Make sure the FastAPI server is running.",
         "api_command": "Command: `python src/backend/api.py` or `uvicorn src.backend.api:app --reload`",
-        
         # Upload
         "upload_title": "Choose one or more CVs (PDF or DOCX, maximum 3)",
         "upload_help": "Select up to 3 CV files to convert simultaneously",
@@ -227,10 +209,11 @@ TRANSLATIONS = {
         "preview_pdfs": "📄 PDF Preview",
         "files_selected_list": "**Selected files:**",
         "choose_preview": "🔍 Choose a PDF to preview:",
-        
         # Options
-        "processing_options": "⚙️ Processing Options",        "candidate_name": "Candidate Name (optional)",
-        "candidate_name_help": "If provided, this name will be used in the CV and for the generated file name",        "generate_pitch": "Generate presentation pitch",
+        "processing_options": "⚙️ Processing Options",
+        "candidate_name": "Candidate Name (optional)",
+        "candidate_name_help": "If provided, this name will be used in the CV and for the generated file name",
+        "generate_pitch": "Generate presentation pitch",
         "generate_pitch_help": "The LLM will create a professional presentation text for the candidate",
         "improve_content": "Improve content",
         "improve_content_help": "The LLM will rephrase and enrich the CV content",
@@ -250,7 +233,6 @@ TRANSLATIONS = {
         "max_pages_choice": "Maximum number of pages:",
         "max_pages_warning": "⚠️ WARNING: Content will be automatically reduced and some information will be removed to meet the {pages} page(s) limit!",
         "max_pages_alert": "🚨 REDUCTION MODE ACTIVATED",
-        
         # Rate Calculator
         "rate_calculator_title": "💰 Rate and Direct Cost Margin Calculator",
         "rate_suggestion": "💡 Suggestion based on {years} years of experience: **€{rate}/day**",
@@ -275,17 +257,14 @@ TRANSLATIONS = {
         "calculation_details": "📋 Calculation details",
         "margin": "Gross margin",
         "mcd_formula": "DCM formula",
-        
         # Conversion
         "convert_section": "🚀 CV Generation",
         "select_model": "AI Model to Use",
         "select_model_help": "Choose the OpenAI model to generate your CV. More performant models produce better results but cost more.",
-        
         # AI Models - Performance
         "model_perf_excellent": "Excellent",
         "model_perf_very_good": "Very Good",
         "model_perf_good": "Good",
-        
         # AI Models - Cost
         "model_cost_high": "~$0.03/CV generated",
         "model_cost_medium": "~$0.003/CV generated",
@@ -293,12 +272,10 @@ TRANSLATIONS = {
         "model_cost_label_high": "High",
         "model_cost_label_medium": "Economic",
         "model_cost_label_low": "Very Economic",
-        
         # AI Models - Descriptions
         "model_gpt4o_desc": "Most powerful model. Best generation quality and understanding. Recommended for critical CVs.",
         "model_gpt5mini_desc": "Good performance/cost balance. High quality at reduced price. Recommended for daily use.",
         "model_gpt35_desc": "Fast and economic model. Good quality for standard CVs. Ideal for testing and high volumes.",
-        
         "convert_button": "🚀 Convert",
         "convert_multiple": "🚀 Convert {count} CVs",
         "processing_cv": "📄 Processing CV {current}/{total}: {filename}",
@@ -307,7 +284,6 @@ TRANSLATIONS = {
         "connection_error": "❌ API connection error",
         "error": "❌ Error: {error}",
         "unknown_error": "Unknown error",
-        
         # Results
         "results_title": "📊 Results",
         "results_success": "✅ {success}/{total} CV(s) converted successfully",
@@ -330,14 +306,13 @@ TRANSLATIONS = {
         "status_success": "✅ Success",
         "skills_title": "🎯 Skills and Proficiency Level",
         "skills_empty": "No skills assessment available",
-        
         # Info Section
         "info_title": "ℹ️ Information",
         "info_how_to": "### How to use this tool?",
-        "info_step1": "1. **Upload your CV**: Click \"Browse files\" and select your CV in PDF or DOCX format",
+        "info_step1": '1. **Upload your CV**: Click "Browse files" and select your CV in PDF or DOCX format',
         "info_step2": "2. **Configure options**: Choose whether to generate a pitch and/or improve content",
-        "info_step3": "3. **Start conversion**: Click the \"🚀 Convert\" button",
-        "info_step4": "4. **Download result**: Once conversion is complete, click \"📥 Download\"",
+        "info_step3": '3. **Start conversion**: Click the "🚀 Convert" button',
+        "info_step4": '4. **Download result**: Once conversion is complete, click "📥 Download"',
         "info_modes_title": "### Improvement Modes",
         "info_mode_none": "- **None**: Faithful extraction of original content",
         "info_mode_basic": "- **Basic**: Wording improvement, spelling correction, vocabulary enrichment",
@@ -352,12 +327,10 @@ TRANSLATIONS = {
         "info_feature7": "- ✅ Automatic skills assessment",
         "info_architecture_title": "### Architecture",
         "info_architecture": "- **Backend**: FastAPI (REST API)\n- **Frontend**: Streamlit\n- **AI**: OpenAI GPT-5-mini",
-        
         # History
         "history_title": "📚 CV History",
         "history_empty": "No CV in history",
         "history_count": "✅ {count} CV(s) in memory",
-
         "history_debug": "🔍 Debug",
         "history_cache_dir": "**Cache dir:**",
         "history_exists": "**Exists:**",
@@ -368,18 +341,16 @@ TRANSLATIONS = {
         "history_loaded": "🔄 Regenerating CV from history: **{filename}**",
         "history_loaded_success": "✅ CV loaded from history!",
         "history_loaded_info": "💡 You can now download the DOCX by clicking the button below",
-        
         # Footer
         "footer_company": "",
         "footer_copyright": "© 2026 - CV Generator v1.0",
-        
         # Info section
         "info_title": "ℹ️ Information",
         "info_how_to": "### How to use this tool?",
-        "info_step1": "1. **Upload your CV**: Click \"Browse files\" and select your CV in PDF format",
+        "info_step1": '1. **Upload your CV**: Click "Browse files" and select your CV in PDF format',
         "info_step2": "2. **Configure options**: Choose whether to generate a pitch and/or improve content",
-        "info_step3": "3. **Launch conversion**: Click the \"🚀 Convert\" button",
-        "info_step4": "4. **Download result**: Once conversion is complete, click \"📥 Download\"",
+        "info_step3": '3. **Launch conversion**: Click the "🚀 Convert" button',
+        "info_step4": '4. **Download result**: Once conversion is complete, click "📥 Download"',
         "info_features": "### Features",
         "info_feature1": "✅ Intelligent extraction with AI (GPT-5-mini)",
         "info_feature2": "✅ Automatic professional formatting",
@@ -398,16 +369,13 @@ TRANSLATIONS = {
         "contact_admin": "💡 Contatta l'amministratore per ottenere le credenziali",
         "connected_as": "👤 Connesso come:",
         "logout": "🚪 Esci",
-        
         # Titolo e navigazione
         "app_title": "Convertitore CV",
         "language": "🌐 Lingua",
-        
         # Stato API
         "api_connected": "✅ API Backend connessa",
         "api_error": "❌ API Backend non disponibile. Assicurati che il server FastAPI sia avviato.",
         "api_command": "Comando: `python src/backend/api.py` o `uvicorn src.backend.api:app --reload`",
-        
         # Caricamento
         "upload_title": "Scegli uno o più CV (PDF o DOCX, massimo 3)",
         "upload_help": "Seleziona fino a 3 file CV da convertire contemporaneamente",
@@ -418,10 +386,11 @@ TRANSLATIONS = {
         "preview_pdfs": "📄 Anteprima PDF",
         "files_selected_list": "**File selezionati:**",
         "choose_preview": "🔍 Scegli un PDF da visualizzare:",
-        
         # Opzioni
-        "processing_options": "⚙️ Opzioni di Elaborazione",        "candidate_name": "Nome del candidato (opzionale)",
-        "candidate_name_help": "Se fornito, questo nome sarà utilizzato nel CV e per il nome del file generato",        "generate_pitch": "Genera pitch di presentazione",
+        "processing_options": "⚙️ Opzioni di Elaborazione",
+        "candidate_name": "Nome del candidato (opzionale)",
+        "candidate_name_help": "Se fornito, questo nome sarà utilizzato nel CV e per il nome del file generato",
+        "generate_pitch": "Genera pitch di presentazione",
         "generate_pitch_help": "Il LLM creerà un testo di presentazione professionale del candidato",
         "improve_content": "Migliora contenuto",
         "improve_content_help": "Il LLM riformulerà e arricchirà il contenuto del CV",
@@ -441,7 +410,6 @@ TRANSLATIONS = {
         "max_pages_choice": "Numero massimo di pagine:",
         "max_pages_warning": "⚠️ ATTENZIONE: Il contenuto sarà automaticamente ridotto e alcune informazioni saranno rimosse per rispettare il limite di {pages} pagina/e!",
         "max_pages_alert": "🚨 MODALITÀ RIDUZIONE ATTIVATA",
-        
         # Calcolatore tariffe
         "rate_calculator_title": "💰 Calcolatore Tariffe e Margine su Costo Diretto",
         "rate_suggestion": "💡 Suggerimento basato su {years} anni di esperienza: **€{rate}/giorno**",
@@ -466,17 +434,14 @@ TRANSLATIONS = {
         "calculation_details": "📋 Dettagli calcolo",
         "margin": "Margine lordo",
         "mcd_formula": "Formula MCD",
-        
         # Conversione
         "convert_section": "🚀 Generazione del CV",
         "select_model": "Modello IA da Utilizzare",
         "select_model_help": "Scegli il modello OpenAI per generare il tuo CV. I modelli più performanti producono risultati migliori ma costano di più.",
-        
         # Modelli IA - Performance
         "model_perf_excellent": "Eccellente",
         "model_perf_very_good": "Molto buono",
         "model_perf_good": "Buono",
-        
         # Modelli IA - Costo
         "model_cost_high": "~$0,03/CV generato",
         "model_cost_medium": "~$0,003/CV generato",
@@ -484,19 +449,18 @@ TRANSLATIONS = {
         "model_cost_label_high": "Alto",
         "model_cost_label_medium": "Economico",
         "model_cost_label_low": "Molto economico",
-        
         # Modelli IA - Descrizioni
         "model_gpt4o_desc": "Modello più potente. Migliore qualità di generazione e comprensione. Consigliato per CV critici.",
         "model_gpt5mini_desc": "Buon equilibrio prestazioni/costo. Alta qualità a prezzo ridotto. Consigliato per uso quotidiano.",
         "model_gpt35_desc": "Modello veloce ed economico. Buona qualità per CV standard. Ideale per test e volumi elevati.",
-        
         "convert_button": "🚀 Converti",
         "convert_multiple": "🚀 Converti {count} CV",
         "processing_cv": "📄 Elaborazione CV {current}/{total}: {filename}",
         "processing_complete": "✅ Elaborazione completata!",
         "timeout_error": "❌ Timeout: La conversione ha richiesto troppo tempo",
         "connection_error": "❌ Errore di connessione API",
-        "error": "❌ Errore: {error}",        "unknown_error": "Errore sconosciuto",        
+        "error": "❌ Errore: {error}",
+        "unknown_error": "Errore sconosciuto",
         # Risultati
         "results_title": "📊 Risultati",
         "results_success": "✅ {success}/{total} CV convertito/i con successo",
@@ -519,14 +483,13 @@ TRANSLATIONS = {
         "status_success": "✅ Successo",
         "skills_title": "🎯 Competenze e Livello di Padronanza",
         "skills_empty": "Nessuna valutazione delle competenze disponibile",
-        
         # Sezione Info
         "info_title": "ℹ️ Informazioni",
         "info_how_to": "### Come utilizzare questo strumento?",
-        "info_step1": "1. **Carica il tuo CV**: Fai clic su \"Browse files\" e seleziona il tuo CV in formato PDF o DOCX",
+        "info_step1": '1. **Carica il tuo CV**: Fai clic su "Browse files" e seleziona il tuo CV in formato PDF o DOCX',
         "info_step2": "2. **Configura le opzioni**: Scegli se generare un pitch e/o migliorare il contenuto",
-        "info_step3": "3. **Avvia la conversione**: Fai clic sul pulsante \"🚀 Converti\"",
-        "info_step4": "4. **Scarica il risultato**: Una volta completata la conversione, fai clic su \"📥 Scarica\"",
+        "info_step3": '3. **Avvia la conversione**: Fai clic sul pulsante "🚀 Converti"',
+        "info_step4": '4. **Scarica il risultato**: Una volta completata la conversione, fai clic su "📥 Scarica"',
         "info_modes_title": "### Modalità di Miglioramento",
         "info_mode_none": "- **Nessuna**: Estrazione fedele del contenuto originale",
         "info_mode_basic": "- **Base**: Miglioramento della formulazione, correzione degli errori, arricchimento del vocabolario",
@@ -541,7 +504,6 @@ TRANSLATIONS = {
         "info_feature7": "- ✅ Valutazione automatica delle competenze",
         "info_architecture_title": "### Architettura",
         "info_architecture": "- **Backend**: FastAPI (API REST)\n- **Frontend**: Streamlit\n- **IA**: OpenAI GPT-5-mini",
-        
         # Cronologia
         "history_title": "📚 Cronologia CV",
         "history_empty": "Nessun CV nella cronologia",
@@ -556,18 +518,16 @@ TRANSLATIONS = {
         "history_loaded": "🔄 Rigenerazione CV dalla cronologia: **{filename}**",
         "history_loaded_success": "✅ CV caricato dalla cronologia!",
         "history_loaded_info": "💡 Ora puoi scaricare il DOCX cliccando il pulsante qui sotto",
-        
         # Footer
         "footer_company": "",
         "footer_copyright": "© 2026 - CV Generator v1.0",
-        
         # Sezione info
         "info_title": "ℹ️ Informazioni",
         "info_how_to": "### Come usare questo strumento?",
-        "info_step1": "1. **Carica il tuo CV**: Clicca su \"Browse files\" e seleziona il tuo CV in formato PDF",
+        "info_step1": '1. **Carica il tuo CV**: Clicca su "Browse files" e seleziona il tuo CV in formato PDF',
         "info_step2": "2. **Configura le opzioni**: Scegli se generare un pitch e/o migliorare il contenuto",
-        "info_step3": "3. **Avvia la conversione**: Clicca sul pulsante \"🚀 Converti\"",
-        "info_step4": "4. **Scarica il risultato**: Una volta completata la conversione, clicca su \"📥 Scarica\"",
+        "info_step3": '3. **Avvia la conversione**: Clicca sul pulsante "🚀 Converti"',
+        "info_step4": '4. **Scarica il risultato**: Una volta completata la conversione, clicca su "📥 Scarica"',
         "info_features": "### Caratteristiche",
         "info_feature1": "✅ Estrazione intelligente con IA (GPT-5-mini)",
         "info_feature2": "✅ Formattazione professionale automatica",
@@ -586,16 +546,13 @@ TRANSLATIONS = {
         "contact_admin": "💡 Contacta al administrador para obtener tus credenciales",
         "connected_as": "👤 Conectado como:",
         "logout": "🚪 Cerrar sesión",
-        
         # Título y navegación
         "app_title": "Conversor de CV",
         "language": "🌐 Idioma",
-        
         # Estado API
         "api_connected": "✅ API Backend conectada",
         "api_error": "❌ API Backend no disponible. Asegúrate de que el servidor FastAPI esté ejecutándose.",
         "api_command": "Comando: `python src/backend/api.py` o `uvicorn src.backend.api:app --reload`",
-        
         # Carga
         "upload_title": "Elige uno o más CV (PDF o DOCX, máximo 3)",
         "upload_help": "Seleccione hasta 3 archivos de CV para convertir simultáneamente",
@@ -606,10 +563,11 @@ TRANSLATIONS = {
         "preview_pdfs": "📄 Vista previa de PDF",
         "files_selected_list": "**Archivos seleccionados:**",
         "choose_preview": "🔍 Elige un PDF para previsualizar:",
-        
         # Opciones
-        "processing_options": "⚙️ Opciones de Procesamiento",        "candidate_name": "Nombre del candidato (opcional)",
-        "candidate_name_help": "Si se proporciona, este nombre se utilizará en el CV y para el nombre del archivo generado",        "generate_pitch": "Generar pitch de presentación",
+        "processing_options": "⚙️ Opciones de Procesamiento",
+        "candidate_name": "Nombre del candidato (opcional)",
+        "candidate_name_help": "Si se proporciona, este nombre se utilizará en el CV y para el nombre del archivo generado",
+        "generate_pitch": "Generar pitch de presentación",
         "generate_pitch_help": "El LLM creará un texto de presentación profesional del candidato",
         "improve_content": "Mejorar contenido",
         "improve_content_help": "El LLM reformulará y enriquecerá el contenido del CV",
@@ -629,7 +587,6 @@ TRANSLATIONS = {
         "max_pages_choice": "Número máximo de páginas:",
         "max_pages_warning": "⚠️ ADVERTENCIA: El contenido se reducirá automáticamente y se eliminará información para cumplir con el límite de {pages} página(s)!",
         "max_pages_alert": "🚨 MODO REDUCCIÓN ACTIVADO",
-        
         # Calculadora de tarifas
         "rate_calculator_title": "💰 Calculadora de Tarifas y Margen sobre Coste Directo",
         "rate_suggestion": "💡 Sugerencia basada en {years} años de experiencia: **€{rate}/día**",
@@ -654,17 +611,14 @@ TRANSLATIONS = {
         "calculation_details": "📋 Detalles del cálculo",
         "margin": "Margen bruto",
         "mcd_formula": "Fórmula MCD",
-        
         # Conversión
         "convert_section": "🚀 Generación del CV",
         "select_model": "Modelo IA a Utilizar",
         "select_model_help": "Elige el modelo OpenAI para generar tu CV. Los modelos más eficientes producen mejores resultados pero cuestan más.",
-        
         # Modelos IA - Rendimiento
         "model_perf_excellent": "Excelente",
         "model_perf_very_good": "Muy bueno",
         "model_perf_good": "Bueno",
-        
         # Modelos IA - Costo
         "model_cost_high": "~$0,03/CV generado",
         "model_cost_medium": "~$0,003/CV generado",
@@ -672,19 +626,18 @@ TRANSLATIONS = {
         "model_cost_label_high": "Alto",
         "model_cost_label_medium": "Económico",
         "model_cost_label_low": "Muy económico",
-        
         # Modelos IA - Descripciones
         "model_gpt4o_desc": "Modelo más potente. Mejor calidad de generación y comprensión. Recomendado para CV críticos.",
         "model_gpt5mini_desc": "Buen equilibrio rendimiento/costo. Alta calidad a precio reducido. Recomendado para uso diario.",
         "model_gpt35_desc": "Modelo rápido y económico. Buena calidad para CV estándar. Ideal para pruebas y volúmenes altos.",
-        
         "convert_button": "🚀 Convertir",
         "convert_multiple": "🚀 Convertir {count} CV",
         "processing_cv": "📄 Procesando CV {current}/{total}: {filename}",
         "processing_complete": "✅ ¡Procesamiento completado!",
         "timeout_error": "❌ Timeout: La conversión tomó demasiado tiempo",
         "connection_error": "❌ Error de conexión API",
-        "error": "❌ Error: {error}",        "unknown_error": "Error desconocido",        
+        "error": "❌ Error: {error}",
+        "unknown_error": "Error desconocido",
         # Resultados
         "results_title": "📊 Resultados",
         "results_success": "✅ {success}/{total} CV(s) convertido(s) exitosamente",
@@ -707,14 +660,13 @@ TRANSLATIONS = {
         "status_success": "✅ Éxito",
         "skills_title": "🎯 Habilidades y Nivel de Dominio",
         "skills_empty": "No hay evaluación de habilidades disponible",
-        
         # Sección de Información
         "info_title": "ℹ️ Información",
         "info_how_to": "### ¿Cómo usar esta herramienta?",
-        "info_step1": "1. **Cargue su CV**: Haga clic en \"Browse files\" y seleccione su CV en formato PDF o DOCX",
+        "info_step1": '1. **Cargue su CV**: Haga clic en "Browse files" y seleccione su CV en formato PDF o DOCX',
         "info_step2": "2. **Configure las opciones**: Elija si desea generar un pitch y/o mejorar el contenido",
-        "info_step3": "3. **Inicie la conversión**: Haga clic en el botón \"🚀 Convertir\"",
-        "info_step4": "4. **Descargue el resultado**: Una vez completada la conversión, haga clic en \"📥 Descargar\"",
+        "info_step3": '3. **Inicie la conversión**: Haga clic en el botón "🚀 Convertir"',
+        "info_step4": '4. **Descargue el resultado**: Una vez completada la conversión, haga clic en "📥 Descargar"',
         "info_modes_title": "### Modos de Mejora",
         "info_mode_none": "- **Ninguna**: Extracción fiel del contenido original",
         "info_mode_basic": "- **Básica**: Mejora de la redacción, corrección de errores, enriquecimiento del vocabulario",
@@ -729,12 +681,10 @@ TRANSLATIONS = {
         "info_feature7": "- ✅ Evaluación automática de habilidades",
         "info_architecture_title": "### Arquitectura",
         "info_architecture": "- **Backend**: FastAPI (API REST)\n- **Frontend**: Streamlit\n- **IA**: OpenAI GPT-5-mini",
-        
         # Historial
         "history_title": "📚 Historial de CV",
         "history_empty": "No hay CV en el historial",
         "history_count": "✅ {count} CV en memoria",
-
         "history_debug": "🔍 Debug",
         "history_cache_dir": "**Dir caché:**",
         "history_exists": "**Existe:**",
@@ -745,68 +695,66 @@ TRANSLATIONS = {
         "history_loaded": "🔄 Regenerando CV desde el historial: **{filename}**",
         "history_loaded_success": "✅ ¡CV cargado desde el historial!",
         "history_loaded_info": "💡 Ahora puedes descargar el DOCX haciendo clic en el botón de abajo",
-        
         # Footer
         "footer_company": "",
         "footer_copyright": "© 2026 - CV Generator v1.0",
-        
         # Sección info
         "info_title": "ℹ️ Información",
         "info_how_to": "### ¿Cómo usar esta herramienta?",
-        "info_step1": "1. **Carga tu CV**: Haz clic en \"Browse files\" y selecciona tu CV en formato PDF",
+        "info_step1": '1. **Carga tu CV**: Haz clic en "Browse files" y selecciona tu CV en formato PDF',
         "info_step2": "2. **Configura las opciones**: Elige si deseas generar un pitch y/o mejorar el contenido",
-        "info_step3": "3. **Inicia la conversión**: Haz clic en el botón \"🚀 Convertir\"",
-        "info_step4": "4. **Descarga el resultado**: Una vez completada la conversión, haz clic en \"📥 Descargar\"",
+        "info_step3": '3. **Inicia la conversión**: Haz clic en el botón "🚀 Convertir"',
+        "info_step4": '4. **Descarga el resultado**: Una vez completada la conversión, haz clic en "📥 Descargar"',
         "info_features": "### Características",
         "info_feature1": "✅ Extracción inteligente con IA (GPT-5-mini)",
         "info_feature2": "✅ Formateo profesional automático",
         "info_feature3": "✅ Generación de pitch de presentación",
         "info_feature4": "✅ Preservación de estructura del CV",
         "info_feature5": "✅ Estilo aplicado",
-    }
+    },
 }
 
 LANGUAGES = {
     "fr": "🇫🇷 Français",
     "en": "🇬🇧 English",
     "it": "🇮🇹 Italiano",
-    "es": "🇪🇸 Español"
+    "es": "🇪🇸 Español",
 }
 
 
 def get_language():
     """Retourne la langue sélectionnée (par défaut: français)"""
-    if 'language' not in st.session_state:
-        st.session_state['language'] = 'fr'
-    return st.session_state['language']
+    if "language" not in st.session_state:
+        st.session_state["language"] = "fr"
+    return st.session_state["language"]
 
 
 def set_language(lang):
     """Définit la langue sélectionnée"""
-    st.session_state['language'] = lang
+    st.session_state["language"] = lang
 
 
 def t(key, **kwargs):
     """
     Retourne la traduction pour la clé donnée dans la langue courante
-    
+
     Args:
         key: Clé de traduction
         **kwargs: Variables à formatter dans la traduction
-        
+
     Returns:
         str: Texte traduit
     """
     lang = get_language()
-    text = TRANSLATIONS.get(lang, TRANSLATIONS['fr']).get(key, key)
-    
+    text = TRANSLATIONS.get(lang, TRANSLATIONS["fr"]).get(key, key)
+
     # Formatter les variables si présentes
     if kwargs:
         try:
             text = text.format(**kwargs)
         except KeyError:
             pass
-    
+
     return text
 
 
@@ -814,19 +762,21 @@ def render_language_selector():
     """Affiche le sélecteur de langue dans la sidebar"""
     with st.sidebar:
         current_lang = get_language()
-        
+
         # Trouver l'index de la langue courante
         lang_keys = list(LANGUAGES.keys())
-        current_index = lang_keys.index(current_lang) if current_lang in lang_keys else 0
-        
+        current_index = (
+            lang_keys.index(current_lang) if current_lang in lang_keys else 0
+        )
+
         selected_lang = st.selectbox(
             t("language"),
             options=lang_keys,
             format_func=lambda x: LANGUAGES[x],
             index=current_index,
-            key="language_selector"
+            key="language_selector",
         )
-        
+
         if selected_lang != current_lang:
             set_language(selected_lang)
             st.rerun()
