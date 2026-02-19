@@ -1,16 +1,16 @@
 """Service de conversion CV - Logique métier"""
 
-import time
 import sys
+import time
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from core.agent import CVConverterAgent
 from config.logging_config import conversion_logger
 from config.settings import get_settings
+from core.agent import CVConverterAgent
 
 
 class CVConversionService:

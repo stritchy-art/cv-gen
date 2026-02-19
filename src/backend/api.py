@@ -2,28 +2,29 @@
 API Backend FastAPI pour le CV Generator
 """
 
-import sys
-from pathlib import Path
-from typing import Optional
-from fastapi import FastAPI, UploadFile, File, HTTPException, status, Form
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import tempfile
-import shutil
 import base64
+import shutil
+import sys
+import tempfile
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
+from pathlib import Path
+from typing import Optional
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from config.settings import get_settings
 from config.logging_config import api_logger
+from config.settings import get_settings
+from core.docx_extractor import is_docx_file
 from src.backend.models import ConversionResponse, HealthCheck
 from src.backend.service import CVConversionService
 from src.backend.translations import t
-from core.docx_extractor import is_docx_file
 
 
 class ImprovementMode(str, Enum):

@@ -2,10 +2,11 @@
 Tests unitaires pour la configuration
 """
 
-import pytest
-from pathlib import Path
-import sys
 import os
+import sys
+from pathlib import Path
+
+import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))

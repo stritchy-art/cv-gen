@@ -2,11 +2,13 @@
 Module de calcul de taux journalier et MCD (Marge Commerciale Directe)
 """
 
-import streamlit as st
-from .translations import t
 import re
 import sys
 from pathlib import Path
+
+import streamlit as st
+
+from .translations import t
 
 # Ajouter le dossier racine au path pour importer config
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))

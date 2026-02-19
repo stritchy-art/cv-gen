@@ -1,8 +1,9 @@
 """Composant d'authentification"""
 
 import streamlit as st
-from config.logging_config import app_logger
 from components.translations import t
+
+from config.logging_config import app_logger
 
 
 def check_password() -> bool:

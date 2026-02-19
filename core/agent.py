@@ -6,21 +6,22 @@ Ce script orchestre le processus complet :
 3. Génération du fichier DOCX formaté
 """
 
-import os
-import json
 import hashlib
+import json
+import os
 from pathlib import Path
 from typing import Optional
-from openai import OpenAI
-from dotenv import load_dotenv
-from diskcache import Cache
 
-from core.pdf_extractor import extract_pdf_content
+import docx2txt
+from diskcache import Cache
+from dotenv import load_dotenv
+from openai import OpenAI
+
+from config.logging_config import setup_logger
 from core.docx_extractor import extract_docx_content
 from core.docx_generator import generate_docx_from_cv_data
+from core.pdf_extractor import extract_pdf_content
 from core.prompts import PromptTemplates
-from config.logging_config import setup_logger
-import docx2txt
 
 # Charger le fichier .env
 load_dotenv()

@@ -2,18 +2,19 @@
 Tests unitaires pour le service de conversion
 """
 
-import pytest
-from pathlib import Path
+import os
 import sys
 import tempfile
-import os
+from pathlib import Path
 from unittest.mock import Mock, patch
+
+import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.backend.service import CVConversionService
 from config.settings import get_settings
+from src.backend.service import CVConversionService
 
 
 class TestCVConversionService:

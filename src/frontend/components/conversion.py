@@ -1,10 +1,11 @@
 """Composant de conversion et traitement des CV"""
 
-import streamlit as st
 import requests
-from config.logging_config import app_logger
-from components.history import save_cv_to_history, get_cv_from_history
+import streamlit as st
+from components.history import get_cv_from_history, save_cv_to_history
 from components.translations import t
+
+from config.logging_config import app_logger
 
 
 def process_conversion(

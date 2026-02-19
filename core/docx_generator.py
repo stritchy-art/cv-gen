@@ -5,14 +5,16 @@ Crée un fichier Word formaté avec le même style visuel que CV_exemple.html
 
 from pathlib import Path
 
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Cm, Inches, Pt, RGBColor
+
+from config.logging_config import setup_logger
+
 # Removed unused imports - types used via dict, list builtin types
 
-from docx import Document
-from docx.shared import Pt, Inches, Cm, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
-from docx.oxml import OxmlElement
-from config.logging_config import setup_logger
 
 # Logger
 logger = setup_logger(__name__, "docx_generator.log")
@@ -96,6 +98,7 @@ class CVDocxGenerator:
     def _add_page_footer(self):
         """Ajoute un pied de page avec numérotation, date et copyright"""
         from datetime import datetime
+
         from docx.oxml import parse_xml, register_element_cls
         from docx.oxml.ns import nsdecls
 
@@ -236,8 +239,8 @@ class CVDocxGenerator:
         header_section = section.header
 
         # Créer un tableau avec 3 colonnes pour un meilleur équilibre visuel
-        from docx.table import Table
         from docx.shared import Inches
+        from docx.table import Table
 
         table = header_section.add_table(rows=1, cols=3, width=Inches(6.88))
         table.autofit = False

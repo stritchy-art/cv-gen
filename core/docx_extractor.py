@@ -3,9 +3,11 @@ Module d'extraction de contenu DOCX
 Extrait le texte d'un fichier DOCX pour traitement par LLM
 """
 
-import docx2txt
 from pathlib import Path
 from typing import Union
+
+import docx2txt
+
 from config.logging_config import setup_logger
 
 # Logger

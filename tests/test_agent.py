@@ -2,13 +2,14 @@
 Tests unitaires pour le module core.agent
 """
 
-import pytest
-from pathlib import Path
-import sys
-import tempfile
 import json
 import os
-from unittest.mock import Mock, patch, MagicMock
+import sys
+import tempfile
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))

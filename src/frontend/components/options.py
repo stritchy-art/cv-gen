@@ -1,8 +1,9 @@
 """Composant des options de traitement"""
 
+from typing import Optional, Tuple
+
 import streamlit as st
 from components.translations import t
-from typing import Tuple, Optional
 
 
 def render_processing_options() -> (

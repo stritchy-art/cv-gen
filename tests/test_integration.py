@@ -2,16 +2,17 @@
 Tests d'intégration pour l'application complète
 """
 
-import pytest
-from pathlib import Path
 import sys
 import tempfile
+from pathlib import Path
+
+import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.docx_generator import generate_docx_from_cv_data
 from config.settings import get_settings
+from core.docx_generator import generate_docx_from_cv_data
 
 
 @pytest.mark.integration

@@ -1,7 +1,8 @@
 """Composant d'upload de fichiers et prévisualisation"""
 
-import streamlit as st
 import base64
+
+import streamlit as st
 from components.translations import t
 
 

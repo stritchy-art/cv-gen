@@ -1,10 +1,11 @@
 """Composant d'affichage des résultats de conversion"""
 
-import streamlit as st
+import tempfile
 import zipfile
 from io import BytesIO
 from pathlib import Path
-import tempfile
+
+import streamlit as st
 from components.translations import t
 
 
@@ -97,8 +98,10 @@ def _render_cv_result(res, index, total_files, generate_pitch):
                     with st.spinner(t("generating")):
                         tmp_path = None
                         try:
-                            from core.docx_generator import generate_docx_from_cv_data
                             import time
+
+                            from core.docx_generator import \
+                                generate_docx_from_cv_data
 
                             # Générer le DOCX avec un fichier temporaire
                             with tempfile.NamedTemporaryFile(

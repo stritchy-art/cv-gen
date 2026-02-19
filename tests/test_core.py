@@ -2,18 +2,19 @@
 Tests unitaires pour les modules core
 """
 
-import pytest
-from pathlib import Path
+import json
 import sys
 import tempfile
-import json
+from pathlib import Path
+
+import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.pdf_extractor import extract_pdf_content
 from core.docx_extractor import extract_docx_content, is_docx_file
 from core.docx_generator import CVDocxGenerator, generate_docx_from_cv_data
+from core.pdf_extractor import extract_pdf_content
 
 
 class TestPDFExtractor:

@@ -3,9 +3,11 @@ Module d'extraction de contenu PDF
 Extrait le texte et la structure d'un fichier PDF pour traitement par LLM
 """
 
-import pdfplumber
 from pathlib import Path
 from typing import Union
+
+import pdfplumber
+
 from config.logging_config import setup_logger
 
 # Logger

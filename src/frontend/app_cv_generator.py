@@ -3,26 +3,27 @@ Frontend Streamlit modernisé - Interface utilisateur modulaire
 Communique avec l'API Backend FastAPI
 """
 
-import streamlit as st
 import sys
 from pathlib import Path
+
+import streamlit as st
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from config.settings import get_settings
-
+from components.api_utils import display_api_status
 # Import des composants
 from components.auth import check_password, render_logout_button
-from components.styles import apply_custom_styles, render_footer
-from components.api_utils import display_api_status
-from components.upload import upload_cv_files, preview_pdf_files
-from components.options import render_processing_options
 from components.conversion import process_conversion
-from components.results import display_results
-from components.history import render_history_sidebar, get_cv_from_history
-from components.translations import t, render_language_selector
+from components.history import get_cv_from_history, render_history_sidebar
+from components.options import render_processing_options
 from components.rate_calculator import display_rate_calculator
+from components.results import display_results
+from components.styles import apply_custom_styles, render_footer
+from components.translations import render_language_selector, t
+from components.upload import preview_pdf_files, upload_cv_files
+
+from config.settings import get_settings
 
 # Configuration
 settings = get_settings()

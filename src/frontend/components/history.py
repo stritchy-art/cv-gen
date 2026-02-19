@@ -1,13 +1,14 @@
 """Composant d'historique des CV traités dans la sidebar"""
 
-import streamlit as st
-from datetime import datetime
-from pathlib import Path
-from diskcache import Cache
-from typing import Dict, List, Optional
 import hashlib
 import json
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import streamlit as st
 from components.translations import t
+from diskcache import Cache
 
 # Cache pour l'historique des CV
 HISTORY_DIR = Path(__file__).parent.parent.parent.parent / "cache" / "cv_history"
