@@ -100,8 +100,7 @@ def _render_cv_result(res, index, total_files, generate_pitch):
                         try:
                             import time
 
-                            from core.docx_generator import \
-                                generate_docx_from_cv_data
+                            from core.docx_generator import generate_docx_from_cv_data
 
                             # Générer le DOCX avec un fichier temporaire
                             with tempfile.NamedTemporaryFile(

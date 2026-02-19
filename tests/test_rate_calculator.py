@@ -11,8 +11,10 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.settings import settings
-from src.frontend.components.rate_calculator import (extract_years_experience,
-                                                     suggest_daily_rate)
+from src.frontend.components.rate_calculator import (
+    extract_years_experience,
+    suggest_daily_rate,
+)
 
 
 class TestExtractYearsExperience:

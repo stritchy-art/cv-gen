@@ -12,6 +12,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from components.api_utils import display_api_status
+
 # Import des composants
 from components.auth import check_password, render_logout_button
 from components.conversion import process_conversion
