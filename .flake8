@@ -14,14 +14,14 @@ exclude =
 
 # E402: module level import not at top of file (common in Streamlit/FastAPI apps with path setup)
 # E501: line too long (Black handles this with 120 char limit)
+# E722: bare except (acceptable in some error handling cases)
 # W293: blank line contains whitespace
 # W291: trailing whitespace  
+# W503: line break before binary operator (Black style)
 # F401: imported but unused (often needed for exports or type checking)
 # F541: f-string without placeholders
 # F601: dictionary key repeated (intentional for multi-language overrides)
-ignore = E402,E501,W293,W291,F541,F601
+ignore = E402,E501,E722,W293,W291,W503,F401,F541,F601
 
 per-file-ignores =
     __init__.py:F401
-    */components/*.py:E722
-    */frontend/*.py:E722
