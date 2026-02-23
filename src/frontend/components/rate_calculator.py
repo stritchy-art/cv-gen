@@ -187,17 +187,17 @@ def display_rate_calculator(cv_data=None):
         if calculated_cjm > 0 and tjm > 0:
             mcd = ((tjm - calculated_cjm) / tjm) * 100
 
-            # Afficher le résultat avec couleur selon la marge
-            if mcd >= 35:
+            # Afficher le résultat avec couleur selon la marge (préco -> Olivier Jossely)
+            if mcd >= 38:
                 st.success(f"✅ **{t('mcd_result')} : {mcd:.2f}%**")
                 st.caption(t("mcd_excellent"))
-            elif mcd >= 23:
+            elif mcd >= 30:
                 st.success(f"✅ **{t('mcd_result')} : {mcd:.2f}%**")
                 st.caption(t("mcd_good"))
-            elif mcd >= 15:
+            elif mcd >= 25:
                 st.warning(f"⚠️ **{t('mcd_result')} : {mcd:.2f}%**")
                 st.caption(t("mcd_acceptable"))
-            elif mcd >= 10:
+            elif mcd >= 18:
                 st.warning(f"⚠️ **{t('mcd_result')} : {mcd:.2f}%**")
                 st.caption(t("mcd_low"))
             else:

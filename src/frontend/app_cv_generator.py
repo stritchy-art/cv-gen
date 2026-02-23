@@ -14,7 +14,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from components.api_utils import display_api_status
 
 # Import des composants
-from components.auth import check_password, render_logout_button
 from components.conversion import process_conversion
 from components.history import get_cv_from_history, render_history_sidebar
 from components.options import render_processing_options
@@ -33,13 +32,6 @@ API_URL = f"http://localhost:{settings.API_PORT}"
 st.set_page_config(
     page_title="Convertisseur CV PDF vers DOCX", page_icon="📄", layout="centered"
 )
-
-# ==================== AUTHENTIFICATION ====================
-if not check_password():
-    st.stop()
-
-# Bouton de déconnexion dans la sidebar
-render_logout_button()
 
 # Sélecteur de langue dans la sidebar
 render_language_selector()
