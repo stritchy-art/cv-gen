@@ -2,6 +2,7 @@
 Configuration pytest et fixtures globales
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -9,6 +10,11 @@ import pytest
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Définir une clé API factice pour les tests si elle n'est pas déjà définie.
+# Doit être fait AVANT tout import de config.settings (qui instancie Settings() au niveau module).
+os.environ.setdefault("AI_API_KEY", "test-key-for-testing")
+os.environ.setdefault("ENVIRONMENT", "testing")
 
 
 @pytest.fixture(scope="session")

@@ -124,10 +124,24 @@ class Settings(BaseSettings):
         case_sensitive = True
 
 
-# Instance globale des settings
-settings = Settings()
+# Instance globale (lazy initialization — instanciée au premier accès, pas à l'import)
+_settings: Optional[Settings] = None
 
 
 def get_settings() -> Settings:
-    """Récupère l'instance des settings"""
-    return settings
+    """Récupère l'instance des settings (lazy initialization)"""
+    global _settings
+    if _settings is None:
+        _settings = Settings()
+    return _settings
+
+
+def __getattr__(name: str) -> object:
+    """Accès lazy à 'settings' pour la rétrocompatibilité (Python 3.7+).
+
+    Permet ``from config.settings import settings`` sans déclencher
+    Settings() au moment de l'import du module.
+    """
+    if name == "settings":
+        return get_settings()
+    raise AttributeError(f"module 'config.settings' has no attribute '{name}'")
