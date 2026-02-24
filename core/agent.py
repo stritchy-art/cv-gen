@@ -39,21 +39,23 @@ CACHE_TTL = 15 * 24 * 60 * 60  # 15 jours en secondes
 class CVConverterAgent:
     def __init__(self):
         """
-        Initialise l'agent avec OpenAI
+        Initialise l'agent avec l'endpoint OVH AI (compatible OpenAI)
 
         Variables d'environnement requises:
-            OPENAI_API_KEY: Clé API OpenAI
-            OPENAI_MODEL: Nom du modèle (optionnel, défaut: gpt-5-mini)
+            AI_API_KEY: Clé API OVH AI
+            AI_API_BASE_URL: URL de base de l'API (optionnel, défaut: https://llm.ai.cloud.ovh.net/v1)
+            AI_MODEL: Nom du modèle (optionnel, défaut: Mistral-Small-3.2-24B-Instruct-2506)
         """
-        # Vérification de la clé API OpenAI
-        api_key = os.getenv("OPENAI_API_KEY")
+        # Vérification de la clé API
+        api_key = os.getenv("AI_API_KEY")
         if not api_key:
-            raise ValueError("Variable d'environnement OPENAI_API_KEY requise")
+            raise ValueError("Variable d'environnement AI_API_KEY requise")
 
-        self.client = OpenAI(api_key=api_key)
+        base_url = os.getenv("AI_API_BASE_URL", "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1")
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
 
         # Modèle par défaut ou personnalisé
-        self.model = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+        self.model = os.getenv("AI_MODEL", "Mistral-Small-3.2-24B-Instruct-2506")
 
     def _generate_cache_key(
         self,
@@ -232,7 +234,7 @@ class CVConverterAgent:
                     },
                     {"role": "user", "content": prompt},
                 ],
-                max_completion_tokens=1000,
+                max_tokens=1000,
             )
 
             pitch = (

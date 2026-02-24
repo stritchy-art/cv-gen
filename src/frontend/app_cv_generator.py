@@ -117,7 +117,7 @@ if uploaded_files:
             t("select_model"),
             options=range(len(model_options)),
             format_func=lambda i: model_labels[i],
-            index=1,  # gpt-4o-mini par défaut
+            index=0,  # Mistral-Small-3.2-24B-Instruct-2506 par défaut
             help=t("select_model_help"),
         )
 

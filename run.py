@@ -19,20 +19,20 @@ def main():
     from dotenv import load_dotenv
     load_dotenv()
     
-    if not os.getenv("OPENAI_API_KEY"):
+    if not os.getenv("AI_API_KEY"):
         print("\n" + "=" * 70)
-        print("  ❌ ERREUR: Clé API OpenAI manquante")
+        print("  ❌ ERREUR: Clé API OVH AI manquante")
         print("=" * 70)
-        print("\n⚠️  La variable OPENAI_API_KEY n'est pas définie.\n")
+        print("\n⚠️  La variable AI_API_KEY n'est pas définie.\n")
         print("📝 Pour la configurer, vous avez deux options:\n")
         print("   Option 1 - Fichier .env (recommandé):")
         print("   -----------------------------------------")
         print("   1. Créez un fichier .env à la racine du projet")
-        print("   2. Ajoutez: OPENAI_API_KEY=sk-votre_clé_ici\n")
+        print("   2. Ajoutez: AI_API_KEY=votre_clé_ovh_ici\n")
         print("   Option 2 - Variable d'environnement:")
         print("   -------------------------------------")
-        print("   PowerShell: $env:OPENAI_API_KEY=\"sk-votre_clé_ici\"")
-        print("   Bash: export OPENAI_API_KEY=\"sk-votre_clé_ici\"\n")
+        print("   PowerShell: $env:AI_API_KEY=\"votre_clé_ovh_ici\"")
+        print("   Bash: export AI_API_KEY=\"votre_clé_ovh_ici\"\n")
         print("=" * 70 + "\n")
         return 1
     
@@ -57,7 +57,10 @@ def main():
         "src.backend.api:app",
         "--host", "0.0.0.0",
         "--port", str(settings.API_PORT),
-        "--reload"
+        "--reload",
+        "--reload-dir", "src",
+        "--reload-dir", "core",
+        "--reload-dir", "config",
     ]
     
     frontend_cmd = [

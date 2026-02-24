@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests unitaires pour le module core.agent
 """
 
@@ -23,30 +23,30 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_initialization_with_api_key(self, mock_openai):
         """Test initialisation avec clé API"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
-            assert agent.model == "gpt-5-mini"
-            mock_openai.assert_called_once_with(api_key="test-key")
+            assert agent.model == "Mistral-Small-3.2-24B-Instruct-2506"
+            mock_openai.assert_called_once_with(api_key="test-key", base_url="https://oai.endpoints.kepler.ai.cloud.ovh.net/v1")
 
     def test_initialization_without_api_key(self):
         """Test initialisation sans clé API"""
         with patch.dict(os.environ, {}, clear=True):
-            with pytest.raises(ValueError, match="OPENAI_API_KEY requise"):
+            with pytest.raises(ValueError, match="AI_API_KEY requise"):
                 CVConverterAgent()
 
     @patch("core.agent.OpenAI")
     def test_initialization_custom_model(self, mock_openai):
         """Test initialisation avec modèle personnalisé"""
         with patch.dict(
-            os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "gpt-4o"}
+            os.environ, {"AI_API_KEY": "test-key", "AI_MODEL": "Mixtral-8x7B-Instruct-v0.1"}
         ):
             agent = CVConverterAgent()
-            assert agent.model == "gpt-4o"
+            assert agent.model == "Mixtral-8x7B-Instruct-v0.1"
 
     @patch("core.agent.OpenAI")
     def test_generate_cache_key_basic(self, mock_openai):
         """Test génération de clé de cache basique"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             key = agent._generate_cache_key("test content", False, "none")
             assert key.startswith("cv_")
@@ -55,7 +55,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_cache_key_with_job_offer(self, mock_openai):
         """Test génération de clé de cache avec appel d'offres"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             key1 = agent._generate_cache_key(
                 "test content", True, "targeted", "job offer"
@@ -67,7 +67,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_cache_key_consistency(self, mock_openai):
         """Test cohérence de la génération de clé de cache"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             key1 = agent._generate_cache_key("test", False, "none")
             key2 = agent._generate_cache_key("test", False, "none")
@@ -76,7 +76,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_extract_job_offer_content_file_not_found(self, mock_openai):
         """Test extraction d'appel d'offres avec fichier inexistant"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             with pytest.raises(FileNotFoundError):
                 agent.extract_job_offer_content("nonexistent.pdf")
@@ -84,7 +84,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_extract_job_offer_content_unsupported_format(self, mock_openai):
         """Test extraction d'appel d'offres avec format non supporté"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Créer un fichier temporaire avec extension non supportée
@@ -101,7 +101,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_extract_job_offer_content_txt(self, mock_openai):
         """Test extraction d'appel d'offres TXT"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Créer un fichier TXT temporaire
@@ -121,7 +121,7 @@ class TestCVConverterAgent:
     @patch("core.agent.docx2txt.process")
     def test_extract_job_offer_content_docx(self, mock_docx2txt, mock_openai):
         """Test extraction d'appel d'offres DOCX"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             mock_docx2txt.return_value = "Contenu DOCX"
 
@@ -141,7 +141,7 @@ class TestCVConverterAgent:
     @patch("core.agent.extract_pdf_content")
     def test_extract_job_offer_content_pdf(self, mock_extract_pdf, mock_openai):
         """Test extraction d'appel d'offres PDF"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             mock_extract_pdf.return_value = "Contenu PDF"
 
@@ -163,7 +163,7 @@ class TestCVConverterAgent:
         self, mock_openai_class, mock_cache
     ):
         """Test extraction structurée basique avec LLM"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -196,7 +196,7 @@ class TestCVConverterAgent:
         self, mock_openai_class, mock_cache
     ):
         """Test extraction avec amélioration du contenu"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -232,7 +232,7 @@ class TestCVConverterAgent:
         self, mock_openai_class, mock_cache
     ):
         """Test extraction avec amélioration ciblée"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -268,7 +268,7 @@ class TestCVConverterAgent:
         self, mock_cache, mock_openai_class
     ):
         """Test extraction avec traduction"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -304,7 +304,7 @@ class TestCVConverterAgent:
         self, mock_cache, mock_openai_class
     ):
         """Test extraction avec limitation de pages"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -334,7 +334,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_profile_pitch_basic(self, mock_openai_class, mock_cache):
         """Test génération de pitch basique"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -361,7 +361,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_profile_pitch_with_job_offer(self, mock_openai_class, mock_cache):
         """Test génération de pitch ciblé avec appel d'offres"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Simuler un cache vide
@@ -394,7 +394,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_profile_pitch_empty_response(self, mock_openai_class):
         """Test génération de pitch avec réponse vide"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             mock_response = Mock()
@@ -416,7 +416,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_generate_profile_pitch_api_error(self, mock_openai_class):
         """Test génération de pitch avec erreur API"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             agent.client.chat.completions.create = Mock(
@@ -441,7 +441,7 @@ class TestCVConverterAgent:
         self, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV PDF basique"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Créer un fichier PDF temporaire
@@ -487,7 +487,7 @@ class TestCVConverterAgent:
         self, mock_gen_docx, mock_extract_llm, mock_extract_docx, mock_openai
     ):
         """Test traitement CV DOCX"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             # Créer un fichier DOCX temporaire
@@ -530,7 +530,7 @@ class TestCVConverterAgent:
         self, mock_pitch, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV avec génération de pitch"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -565,7 +565,7 @@ class TestCVConverterAgent:
     @patch("core.agent.extract_pdf_content")
     def test_process_cv_insufficient_content(self, mock_extract_pdf, mock_openai):
         """Test traitement CV avec contenu insuffisant"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -585,7 +585,7 @@ class TestCVConverterAgent:
     @patch("core.agent.OpenAI")
     def test_process_cv_unsupported_format(self, mock_openai):
         """Test traitement CV avec format non supporté"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as tmp:
@@ -606,7 +606,7 @@ class TestCVConverterAgent:
         self, mock_gen_docx, mock_extract_llm, mock_extract_pdf, mock_openai
     ):
         """Test traitement CV avec nom candidat personnalisé"""
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
 
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:

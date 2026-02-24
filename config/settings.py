@@ -10,37 +10,37 @@ from pydantic_settings import BaseSettings
 from pydantic import Field, validator
 
 
-# Configuration des modèles OpenAI disponibles
+# Configuration des modèles OVH AI disponibles
 AVAILABLE_MODELS = {
-    "gpt-4o": {
-        "name": "GPT-4o",
-        "model_id": "gpt-4o",
-        "performance": "⭐⭐⭐⭐⭐",
-        "cost": "💰💰💰",
-        "cost_key": "model_cost_high",
-        "description_key": "model_gpt4o_desc",
-        "performance_key": "model_perf_excellent",
-        "cost_label_key": "model_cost_label_high"
-    },
-    "gpt-5-mini": {
-        "name": "GPT-5 Mini",
-        "model_id": "gpt-5-mini",
-        "performance": "⭐⭐⭐⭐",
-        "cost": "💰",
-        "cost_key": "model_cost_medium",
-        "description_key": "model_gpt5mini_desc",
-        "performance_key": "model_perf_very_good",
-        "cost_label_key": "model_cost_label_medium"
-    },
-    "gpt-3.5-turbo": {
-        "name": "GPT-3.5 Turbo",
-        "model_id": "gpt-3.5-turbo",
+    "Mistral-Small-3.2-24B-Instruct-2506": {
+        "name": "Mistral Small 3.2 24B",
+        "model_id": "Mistral-Small-3.2-24B-Instruct-2506",
         "performance": "⭐⭐⭐",
         "cost": "💰",
         "cost_key": "model_cost_low",
-        "description_key": "model_gpt35_desc",
+        "description_key": "model_mistral_small_desc",
         "performance_key": "model_perf_good",
         "cost_label_key": "model_cost_label_low"
+    },
+    "gpt-oss-120b": {
+        "name": "GPT OSS 120B",
+        "model_id": "gpt-oss-120b",
+        "performance": "⭐⭐⭐⭐",
+        "cost": "💰💰",
+        "cost_key": "model_cost_medium",
+        "description_key": "model_gpt_oss_120b_desc",
+        "performance_key": "model_perf_very_good",
+        "cost_label_key": "model_cost_label_medium"
+    },
+    "Mixtral-8x7B-Instruct-v0.1": {
+        "name": "Mixtral 8x7B Instruct",
+        "model_id": "Mixtral-8x7B-Instruct-v0.1",
+        "performance": "⭐⭐⭐⭐⭐",
+        "cost": "💰💰💰",
+        "cost_key": "model_cost_high",
+        "description_key": "model_mixtral_8x7b_desc",
+        "performance_key": "model_perf_excellent",
+        "cost_label_key": "model_cost_label_high"
     }
 }
 
@@ -51,10 +51,11 @@ class Settings(BaseSettings):
     # Environnement
     ENVIRONMENT: str = Field(default="development", description="Environnement d'exécution (development/production)")
     
-    # OpenAI
-    OPENAI_API_KEY: str = Field(..., description="Clé API OpenAI")
-    OPENAI_MAX_TOKENS: int = Field(default=1000, description="Nombre maximum de tokens pour les réponses")
-    OPENAI_TEMPERATURE: float = Field(default=0.1, description="Température pour la génération")
+    # OVH AI (compatible OpenAI)
+    AI_API_KEY: str = Field(..., description="Clé API OVH AI")
+    AI_API_BASE_URL: str = Field(default="https://oai.endpoints.kepler.ai.cloud.ovh.net/v1", description="URL de base de l'API OVH AI")
+    AI_MAX_TOKENS: int = Field(default=1000, description="Nombre maximum de tokens pour les réponses")
+    AI_TEMPERATURE: float = Field(default=0.1, description="Température pour la génération")
     
     # Application
     APP_NAME: str = Field(default="CV Generator", description="Nom de l'application")

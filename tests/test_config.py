@@ -93,15 +93,16 @@ class TestSettings:
         assert settings.MARKUP_COEFFICIENT > 0
         assert settings.FIXED_COSTS >= 0
 
-    def test_openai_settings_present(self):
-        """Test que les paramètres OpenAI sont définis"""
+    def test_ai_settings_present(self):
+        """Test que les paramètres OVH AI sont définis"""
         settings = get_settings()
         # Ces paramètres devraient exister
-        assert hasattr(settings, "OPENAI_API_KEY")
-        assert hasattr(settings, "OPENAI_MAX_TOKENS")
-        assert hasattr(settings, "OPENAI_TEMPERATURE")
-        assert settings.OPENAI_MAX_TOKENS == 1000
-        assert 0 <= settings.OPENAI_TEMPERATURE <= 1
+        assert hasattr(settings, "AI_API_KEY")
+        assert hasattr(settings, "AI_API_BASE_URL")
+        assert hasattr(settings, "AI_MAX_TOKENS")
+        assert hasattr(settings, "AI_TEMPERATURE")
+        assert settings.AI_MAX_TOKENS == 1000
+        assert 0 <= settings.AI_TEMPERATURE <= 1
 
     def test_settings_singleton(self):
         """Test que get_settings retourne la même instance"""

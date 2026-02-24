@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests unitaires pour le service de conversion
 """
 
@@ -24,7 +24,7 @@ class TestCVConversionService:
     @patch("core.agent.OpenAI")
     def service(self, mock_openai):
         """Fixture pour le service de conversion"""
-        with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
+        with patch.dict("os.environ", {"AI_API_KEY": "test-key"}):
             return CVConversionService()
 
     def test_service_initialization(self, service):

@@ -83,7 +83,7 @@ TRANSLATIONS = {
         # Conversion
         "convert_section": "🚀 Génération du CV",
         "select_model": "Modèle IA à utiliser",
-        "select_model_help": "Choisissez le modèle OpenAI pour générer votre CV. Les modèles plus performants produisent de meilleurs résultats mais coûtent plus cher.",
+        "select_model_help": "Choisissez le modèle OVH AI pour générer votre CV. Les modèles plus performants produisent de meilleurs résultats mais coûtent plus cher.",
         # Modèles IA - Performance
         "model_perf_excellent": "Excellent",
         "model_perf_very_good": "Très bon",
@@ -99,6 +99,9 @@ TRANSLATIONS = {
         "model_gpt4o_desc": "Modèle le plus performant. Meilleure qualité de génération et compréhension. Recommandé pour les CV critiques.",
         "model_gpt5mini_desc": "Bon équilibre performance/coût. Qualité élevée à prix réduit. Recommandé pour un usage quotidien.",
         "model_gpt35_desc": "Modèle rapide et économique. Qualité correcte pour des CV standards. Idéal pour tests et volumes importants.",
+        "model_mistral_small_desc": "Modèle économique OVH. Rapide et efficace pour la grande majorité des CV. Idéal pour un usage intensif.",
+        "model_gpt_oss_120b_desc": "Modèle intermédiaire 120B. Bon équilibre performance/coût pour des CV complexes et détaillés.",
+        "model_mixtral_8x7b_desc": "Modèle haut de gamme OVH. Excellente qualité de rédaction et compréhension contextuelle avancée.",
         "convert_button": "🚀 Convertir",
         "convert_multiple": "🚀 Convertir {count} CV",
         "processing_cv": "📄 Traitement du CV {current}/{total}: {filename}",
@@ -260,7 +263,7 @@ TRANSLATIONS = {
         # Conversion
         "convert_section": "🚀 CV Generation",
         "select_model": "AI Model to Use",
-        "select_model_help": "Choose the OpenAI model to generate your CV. More performant models produce better results but cost more.",
+        "select_model_help": "Choose the OVH AI model to generate your CV. More performant models produce better results but cost more.",
         # AI Models - Performance
         "model_perf_excellent": "Excellent",
         "model_perf_very_good": "Very Good",
@@ -276,6 +279,9 @@ TRANSLATIONS = {
         "model_gpt4o_desc": "Most powerful model. Best generation quality and understanding. Recommended for critical CVs.",
         "model_gpt5mini_desc": "Good performance/cost balance. High quality at reduced price. Recommended for daily use.",
         "model_gpt35_desc": "Fast and economic model. Good quality for standard CVs. Ideal for testing and high volumes.",
+        "model_mistral_small_desc": "OVH economic model. Fast and efficient for the vast majority of CVs. Ideal for intensive use.",
+        "model_gpt_oss_120b_desc": "Intermediate 120B model. Good performance/cost balance for complex and detailed CVs.",
+        "model_mixtral_8x7b_desc": "OVH premium model. Excellent writing quality and advanced contextual understanding.",
         "convert_button": "🚀 Convert",
         "convert_multiple": "🚀 Convert {count} CVs",
         "processing_cv": "📄 Processing CV {current}/{total}: {filename}",
