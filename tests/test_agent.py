@@ -26,7 +26,10 @@ class TestCVConverterAgent:
         with patch.dict(os.environ, {"AI_API_KEY": "test-key"}):
             agent = CVConverterAgent()
             assert agent.model == "Mistral-Small-3.2-24B-Instruct-2506"
-            mock_openai.assert_called_once_with(api_key="test-key", base_url="https://oai.endpoints.kepler.ai.cloud.ovh.net/v1")
+            mock_openai.assert_called_once_with(
+                api_key="test-key",
+                base_url="https://oai.endpoints.kepler.ai.cloud.ovh.net/v1",
+            )
 
     def test_initialization_without_api_key(self):
         """Test initialisation sans clé API"""
@@ -38,7 +41,8 @@ class TestCVConverterAgent:
     def test_initialization_custom_model(self, mock_openai):
         """Test initialisation avec modèle personnalisé"""
         with patch.dict(
-            os.environ, {"AI_API_KEY": "test-key", "AI_MODEL": "Mixtral-8x7B-Instruct-v0.1"}
+            os.environ,
+            {"AI_API_KEY": "test-key", "AI_MODEL": "Mixtral-8x7B-Instruct-v0.1"},
         ):
             agent = CVConverterAgent()
             assert agent.model == "Mixtral-8x7B-Instruct-v0.1"

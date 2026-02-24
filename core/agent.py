@@ -51,7 +51,9 @@ class CVConverterAgent:
         if not api_key:
             raise ValueError("Variable d'environnement AI_API_KEY requise")
 
-        base_url = os.getenv("AI_API_BASE_URL", "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1")
+        base_url = os.getenv(
+            "AI_API_BASE_URL", "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1"
+        )
         self.client = OpenAI(api_key=api_key, base_url=base_url)
 
         # Modèle par défaut ou personnalisé
