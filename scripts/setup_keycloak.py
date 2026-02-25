@@ -59,8 +59,9 @@ AZURE_CLIENT_SECRET = os.environ.get("AZURE_CLIENT_SECRET", "")
 
 
 def wait_for_keycloak(timeout: int = 120) -> None:
-    """Attend que Keycloak soit opérationnel (endpoint /health/ready)."""
-    health_url = f"{KEYCLOAK_URL}/health/ready"
+    """Attend que Keycloak soit opérationnel (endpoint /realms/master)."""
+    # On teste le realm master (endpoint fiable quelque soit la config KC_HTTP_RELATIVE_PATH)
+    health_url = f"{KEYCLOAK_URL}/realms/master/.well-known/openid-configuration"
     start = time.time()
     print(f"⏳ Attente de Keycloak sur {health_url} …", end="", flush=True)
     while time.time() - start < timeout:

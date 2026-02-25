@@ -89,7 +89,7 @@ services:
     networks:
       - cv-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/auth/health/ready || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/auth/realms/master/.well-known/openid-configuration || exit 1"]
       interval: 30s
       timeout: 15s
       retries: 5
