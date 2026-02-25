@@ -15,6 +15,8 @@ Flow complet :
 Si KEYCLOAK_ENABLED=False (par défaut en dev), l'auth est désactivée.
 """
 
+import hashlib
+import hmac
 import os
 import time
 from typing import Optional
@@ -22,6 +24,35 @@ from urllib.parse import urlencode
 
 import requests
 import streamlit as st
+
+# ── Stockage des états CSRF côté serveur ─────────────────────────────────────
+# st.session_state est réinitialisé après chaque redirection OAuth.
+# On stocke donc les nonces valides dans un dict module-level (processus unique
+# en production Streamlit single-worker). TTL : 10 minutes.
+_CSRF_STATES: dict[str, float] = {}
+_CSRF_TTL = 600  # secondes
+
+
+def _csrf_store(state: str) -> None:
+    """Enregistre un state CSRF valide avec son timestamp d'expiration."""
+    _purge_expired_states()
+    _CSRF_STATES[state] = time.time() + _CSRF_TTL
+
+
+def _csrf_validate(state: str) -> bool:
+    """Vérifie qu'un state CSRF existe et n'est pas expiré, puis le supprime."""
+    _purge_expired_states()
+    if state in _CSRF_STATES:
+        del _CSRF_STATES[state]
+        return True
+    return False
+
+
+def _purge_expired_states() -> None:
+    now = time.time()
+    expired = [k for k, exp in _CSRF_STATES.items() if now > exp]
+    for k in expired:
+        del _CSRF_STATES[k]
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -154,15 +185,12 @@ def require_auth() -> Optional[dict]:
         code = params["code"]
         state = params["state"]
 
-        # Vérification CSRF
-        if state != st.session_state.get("oauth_state"):
-            st.error(
-                "⚠️ Paramètre `state` invalide — possible tentative CSRF. "
-                "Veuillez relancer la connexion."
-            )
-            st.session_state.pop("oauth_state", None)
-            if st.button("🔄 Réessayer"):
-                st.rerun()
+        # Vérification CSRF (stockage serveur-side — résiste à la réinitialisation
+        # de st.session_state lors de la redirection OAuth)
+        if not _csrf_validate(state):
+            # State inconnu ou expiré : relancer proprement
+            st.query_params.clear()
+            st.rerun()
             return None
 
         with st.spinner("Authentification en cours…"):
@@ -177,13 +205,11 @@ def require_auth() -> Optional[dict]:
                 st.session_state["token_expiry"] = (
                     time.time() + tokens.get("expires_in", 300) - 30
                 )
-                st.session_state.pop("oauth_state", None)
                 st.query_params.clear()
                 st.rerun()
                 return None  # st.rerun() lève une exception, mais sécurité
 
         if st.button("🔄 Réessayer la connexion"):
-            st.session_state.pop("oauth_state", None)
             st.rerun()
         return None
 
@@ -234,11 +260,12 @@ def _render_login_page() -> None:
         unsafe_allow_html=True,
     )
 
-    if "oauth_state" not in st.session_state:
-        st.session_state["oauth_state"] = os.urandom(16).hex()
+    # Génère un nonce CSRF stocké côté serveur (survit à la redirection OAuth)
+    state = os.urandom(16).hex()
+    _csrf_store(state)
 
     try:
-        auth_url = _build_auth_url(st.session_state["oauth_state"])
+        auth_url = _build_auth_url(state)
         st.markdown(
             f"""
             <div style="display:flex;justify-content:center;margin-top:8px;">
@@ -264,7 +291,7 @@ def _do_logout() -> None:
     """Révoque les tokens côté Keycloak (best-effort) et nettoie la session."""
     s = _settings()
     tokens = st.session_state.pop("tokens", {})
-    for key in ("user_info", "token_expiry", "oauth_state"):
+    for key in ("user_info", "token_expiry"):
         st.session_state.pop(key, None)
 
     refresh_token = tokens.get("refresh_token", "")
