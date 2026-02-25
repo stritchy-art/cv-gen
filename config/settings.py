@@ -120,7 +120,7 @@ class Settings(BaseSettings):
     # Ces valeurs servent uniquement au script scripts/setup_keycloak.py
     # pour configurer l'Identity Provider dans Keycloak.
     AZURE_CLIENT_ID: str = Field(
-        default="193e2c6d-d167-4d28-8ee0-098313006299",
+        default="cb62eb1d-8732-4c7c-9cc2-a935c16cf1e6",
         description="Application (client) ID Azure AD - CV Generator",
     )
     AZURE_TENANT_ID: str = Field(
