@@ -219,11 +219,14 @@ def configure_azure_ad_idp(token: str) -> None:
             "config": {
                 "clientId": AZURE_CLIENT_ID,
                 "clientSecret": AZURE_CLIENT_SECRET,
+                # tenantId force l'endpoint tenant-specific au lieu de /common
+                # (obligatoire pour les apps mono-tenant créées après 10/2018)
+                "tenantId": AZURE_TENANT_ID,
                 "tenant": AZURE_TENANT_ID,
+                "authorizationUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/authorize",
+                "tokenUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/token",
                 "defaultScope": "openid email profile",
                 "syncMode": "IMPORT",
-                # Forcer la redirection directe vers Microsoft (optionnel)
-                # "guiOrder": "1",
             },
         },
         headers=admin_headers(token),
