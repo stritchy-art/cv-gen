@@ -227,11 +227,13 @@ def configure_azure_ad_idp(token: str) -> None:
             "clientSecret": AZURE_CLIENT_SECRET,  # valeur brute, jamais relue via GET
             "authorizationUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/authorize",
             "tokenUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/token",
-            "userInfoUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/openid/userinfo",
             "jwksUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/discovery/v2.0/keys",
             "issuer": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/v2.0",
             "validateSignature": "true",
             "useJwksUrl": "true",
+            # Ne PAS appeler /userinfo : Azure AD retourne name/email dans l'ID token.
+            # /openid/userinfo nécessiterait User.Read sur Microsoft Graph.
+            "disableUserInfoService": "true",
             "defaultScope": "openid email profile",
             "syncMode": "IMPORT",
             "pkceEnabled": "false",
