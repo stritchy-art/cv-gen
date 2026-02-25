@@ -126,18 +126,40 @@ def _exchange_code_for_tokens(code: str) -> Optional[dict]:
     return None
 
 
-def _fetch_user_info(access_token: str) -> Optional[dict]:
-    """Récupère le profil utilisateur depuis le endpoint userinfo de Keycloak."""
+def _decode_jwt_payload(token: str) -> dict:
+    """
+    Décode le payload d'un JWT sans vérification de signature.
+    Le token a déjà été validé par Keycloak lors de l'échange du code.
+    """
+    import base64, json as _json
     try:
-        resp = requests.get(
-            f"{_internal_realm_url()}/protocol/openid-connect/userinfo",
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=10,
-        )
-        if resp.status_code == 200:
-            return resp.json()
-    except Exception as exc:
-        st.error(f"⚠️ Impossible de récupérer le profil utilisateur : {exc}")
+        payload_b64 = token.split(".")[1]
+        # Padding Base64URL → Base64
+        payload_b64 += "=" * (4 - len(payload_b64) % 4)
+        return _json.loads(base64.urlsafe_b64decode(payload_b64))
+    except Exception:
+        return {}
+
+
+def _extract_user_from_tokens(tokens: dict) -> Optional[dict]:
+    """
+    Extrait les infos utilisateur depuis l'id_token JWT (ou access_token en fallback).
+    Évite d'appeler /userinfo — ce qui causerait une erreur d'issuer quand le token
+    est émis avec l'URL externe (https://...) mais appelé via l'URL Docker interne.
+    """
+    # Préférer l'id_token (contient toujours name/email avec scope 'profile email')
+    for key in ("id_token", "access_token"):
+        if key in tokens:
+            claims = _decode_jwt_payload(tokens[key])
+            if claims.get("sub"):  # sub présent = token valide
+                return {
+                    "sub": claims.get("sub", ""),
+                    "name": claims.get("name") or claims.get("preferred_username", ""),
+                    "email": claims.get("email", ""),
+                    "preferred_username": claims.get("preferred_username") or claims.get("email", ""),
+                    "given_name": claims.get("given_name", ""),
+                    "family_name": claims.get("family_name", ""),
+                }
     return None
 
 
@@ -197,18 +219,20 @@ def require_auth() -> Optional[dict]:
             tokens = _exchange_code_for_tokens(code)
 
         if tokens:
-            user_info = _fetch_user_info(tokens["access_token"])
+            user_info = _extract_user_from_tokens(tokens)
             if user_info:
                 st.session_state["user_info"] = user_info
                 st.session_state["tokens"] = tokens
-                # Marge de 30 s pour éviter un token périmé en cours de requête
                 st.session_state["token_expiry"] = (
                     time.time() + tokens.get("expires_in", 300) - 30
                 )
                 st.query_params.clear()
                 st.rerun()
-                return None  # st.rerun() lève une exception, mais sécurité
-
+                return None
+            else:
+                st.error("⚠️ Authentification réussie mais impossible d'extraire le profil du token.")
+        # tokens est None : l'échange a échoué (st.error déjà affiché)
+        st.query_params.clear()
         if st.button("🔄 Réessayer la connexion"):
             st.rerun()
         return None
