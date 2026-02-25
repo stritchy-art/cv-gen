@@ -27,7 +27,7 @@ from config.settings import get_settings
 
 # Configuration
 settings = get_settings()
-API_URL = f"http://localhost:{settings.API_PORT}"
+API_URL = f"http://{settings.API_HOST}:{settings.API_PORT}"
 
 st.set_page_config(
     page_title="Convertisseur CV PDF vers DOCX", page_icon="📄", layout="centered"
