@@ -112,15 +112,23 @@ class Settings(BaseSettings):
         description="Secret du client OIDC (généré par Keycloak après setup)",
     )
     OIDC_REDIRECT_URI: str = Field(
-        default="https://94.23.185.97/cv-generator",
+        default="",
         description="URI de redirection OAuth (doit correspondre à la config Keycloak)",
+    )
+    BACKEND_API_TOKEN: str = Field(
+        default="",
+        description="Token secret partagé frontend→backend. Vide = bypass (dev).",
+    )
+    ALLOWED_ORIGINS: str = Field(
+        default="*",
+        description="Origines CORS autorisées, séparées par virgule (* = dev/tout).",
     )
 
     # ── Azure AD / Entra ID ────────────────────────────────────────────────────
     # Ces valeurs servent uniquement au script scripts/setup_keycloak.py
     # pour configurer l'Identity Provider dans Keycloak.
     AZURE_CLIENT_ID: str = Field(
-        default="cb62eb1d-8732-4c7c-9cc2-a935c16cf1e6",
+        default="",
         description="Application (client) ID Azure AD - CV Generator",
     )
     AZURE_TENANT_ID: str = Field(
