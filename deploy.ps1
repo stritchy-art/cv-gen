@@ -19,9 +19,9 @@ Get-Content .env | ForEach-Object {
     }
 }
 
-# Vérifier la clé OpenAI
-if (-not $env:OPENAI_API_KEY) {
-    Write-Host "❌ OPENAI_API_KEY non définie dans .env" -ForegroundColor Red
+# Vérifier la clé OVH AI
+if (-not $env:AI_API_KEY) {
+    Write-Host "❌ AI_API_KEY non définie dans .env" -ForegroundColor Red
     exit 1
 }
 

@@ -16,9 +16,9 @@ fi
 # Charger les variables d'environnement
 export $(cat .env | grep -v '^#' | xargs)
 
-# Vérifier la clé OpenAI
-if [ -z "$OPENAI_API_KEY" ]; then
-    echo "❌ OPENAI_API_KEY non définie dans .env"
+# Vérifier la clé OVH AI
+if [ -z "$AI_API_KEY" ]; then
+    echo "❌ AI_API_KEY non définie dans .env"
     exit 1
 fi
 

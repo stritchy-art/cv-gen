@@ -155,6 +155,26 @@ jobs:
         name: dist-packages
         path: dist/
 
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/cv_gen
+          git pull
+          docker compose build
+          docker compose up -d
+          docker compose ps
+
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
