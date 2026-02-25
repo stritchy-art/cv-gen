@@ -3,6 +3,9 @@ API Backend FastAPI pour le CV Generator
 """
 
 import base64
+import hashlib
+import hmac
+import re
 import shutil
 import sys
 import tempfile
@@ -12,15 +15,16 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Security, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.security import APIKeyHeader
 
 # Ajouter le répertoire racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from config.logging_config import api_logger
-from config.settings import get_settings
+from config.settings import AVAILABLE_MODELS, get_settings
 from core.docx_extractor import is_docx_file
 from src.backend.models import ConversionResponse, HealthCheck
 from src.backend.service import CVConversionService
@@ -45,18 +49,43 @@ app = FastAPI(
 )
 
 # CORS
+_cors_origins = [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+# ── Sécurité API ──────────────────────────────────────────────────────────────
+def _anon(name: str) -> str:
+    """Anonymise un nom de fichier pour les logs (anti-PII)."""
+    return hashlib.sha256(name.encode()).hexdigest()[:10]
+
+
+_api_key_header = APIKeyHeader(name="X-API-Token", auto_error=False)
+
+
+async def _verify_api_token(
+    x_api_token: Optional[str] = Security(_api_key_header),
+) -> None:
+    """Vérifie le token API interne frontend→backend. Bypass si non configuré (dev)."""
+    expected = settings.BACKEND_API_TOKEN
+    if not expected:
+        return  # Token non configuré → bypass
+    if not x_api_token or not hmac.compare_digest(x_api_token, expected):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token API manquant ou invalide.",
+        )
+
 
 # Service de conversion
 conversion_service = CVConversionService()
 
-# Cache des conversions récentes (en mémoire, durée limitée)
+# Cache des conversions récentes (en mémoire, taille bornée)
+_MAX_CACHE_SIZE = 200
 conversion_cache = {}
 CACHE_EXPIRY_MINUTES = 10
 
@@ -73,7 +102,7 @@ async def health_check():
     return HealthCheck(status="healthy", version=settings.APP_VERSION)
 
 
-@app.post("/api/convert", response_model=ConversionResponse)
+@app.post("/api/convert", response_model=ConversionResponse, dependencies=[Depends(_verify_api_token)])
 async def convert_cv(
     file: UploadFile = File(..., description=t("file_description", lang="fr")),
     generate_pitch: str = Form("true"),
@@ -133,6 +162,13 @@ async def convert_cv(
             ),
         )
 
+    # Validation du modèle (format uniquement — rejet des chaînes suspectes)
+    if model and not re.match(r"^[\w.\-]{1,120}$", model):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Nom de modèle invalide.",
+        )
+
     # Validation: si mode targeted, l'appel d'offres est requis
     if improvement_mode_enum == ImprovementMode.TARGETED and not job_offer_file:
         raise HTTPException(
@@ -157,7 +193,7 @@ async def convert_cv(
 
     try:
         api_logger.info(
-            f"Requête de conversion reçue: {file.filename} (mode: {improvement_mode})"
+            f"Requête de conversion reçue: {_anon(file.filename)} (mode: {improvement_mode})"
         )
 
         # Convertir les paramètres string en boolean
@@ -180,7 +216,7 @@ async def convert_cv(
                 shutil.copyfileobj(job_offer_file.file, tmp)
                 temp_job_offer = tmp.name
                 job_offer_path = temp_job_offer
-            api_logger.info(f"Appel d'offres reçu: {job_offer_file.filename}")
+            api_logger.info(f"Appel d'offres reçu: {_anon(job_offer_file.filename)}")
 
         # Convertir max_pages en int si fourni
         max_pages_int = None
@@ -235,14 +271,17 @@ async def convert_cv(
         )
 
         api_logger.info(
-            f"Conversion réussie: {file.filename} -> {response.filename} "
+            f"Conversion réussie: {_anon(file.filename)} -> {_anon(response.filename)} "
             f"({processing_time:.2f}s)"
         )
 
         # Générer un ID unique pour la conversion
         conversion_id = str(uuid.uuid4())
 
-        # Stocker en cache avec un timestamp
+        # Stocker en cache avec un timestamp (taille bornée à _MAX_CACHE_SIZE)
+        if len(conversion_cache) >= _MAX_CACHE_SIZE:
+            oldest = min(conversion_cache, key=lambda k: conversion_cache[k]["timestamp"])
+            del conversion_cache[oldest]
         conversion_cache[conversion_id] = {
             "docx_path": docx_path,
             "result": response,
@@ -270,7 +309,7 @@ async def convert_cv(
             Path(temp_job_offer).unlink()
 
 
-@app.post("/api/convert/download")
+@app.post("/api/convert/download", dependencies=[Depends(_verify_api_token)])
 async def convert_and_download_cv(
     file: UploadFile = File(..., description=t("file_pdf_description", lang="fr")),
     improvement_mode: str = Form(
@@ -323,7 +362,7 @@ async def convert_and_download_cv(
 
     try:
         api_logger.info(
-            f"Requête de conversion+téléchargement: {file.filename} (mode: {improvement_mode})"
+            f"Requête de conversion+téléchargement: {_anon(file.filename)} (mode: {improvement_mode})"
         )
 
         # Sauvegarder le CV uploadé
@@ -360,7 +399,7 @@ async def convert_and_download_cv(
             )
 
         api_logger.info(
-            f"Téléchargement prêt: {Path(docx_path).name} ({processing_time:.2f}s)"
+            f"Téléchargement prêt: {_anon(Path(docx_path).name)} ({processing_time:.2f}s)"
         )
 
         # Encoder le pitch en base64 pour éviter les problèmes d'encodage dans les headers
@@ -398,7 +437,7 @@ async def convert_and_download_cv(
             Path(temp_job_offer).unlink()
 
 
-@app.get("/api/convert/{conversion_id}/download")
+@app.get("/api/convert/{conversion_id}/download", dependencies=[Depends(_verify_api_token)])
 async def download_from_cache(conversion_id: str):
     """Téléchargement depuis le cache (pas de reconversion)"""
 

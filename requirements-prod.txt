@@ -32,6 +32,10 @@ streamlit>=1.28.0
 # Requêtes HTTP
 requests>=2.31.0
 
+# Vérification JWT
+PyJWT[crypto]>=2.8.0
+cryptography>=41.0.0
+
 # === Configuration & Logging ===
 
 # Variables d'environnement

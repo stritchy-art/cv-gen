@@ -95,7 +95,7 @@ class Settings(BaseSettings):
         description="Activer l'authentification Keycloak OIDC (False en dev, True en prod)",
     )
     KEYCLOAK_EXTERNAL_URL: str = Field(
-        default="https://94.23.185.97/auth",
+        default="",
         description="URL externe Keycloak accessible depuis le navigateur",
     )
     KEYCLOAK_INTERNAL_URL: str = Field(

@@ -19,7 +19,7 @@ import hashlib
 import hmac
 import os
 import time
-from typing import Optional
+from typing import Any, Optional
 from urllib.parse import urlencode
 
 import requests
@@ -126,17 +126,58 @@ def _exchange_code_for_tokens(code: str) -> Optional[dict]:
     return None
 
 
+# Module-level JWKS client (mis en cache entre les requêtes Streamlit)
+_jwks_client: Any = None
+_jwks_url_cached: str = ""
+
+
+def _get_jwks_client() -> Optional[Any]:
+    """Client JWKS mis en cache pour vérifier les signatures JWT Keycloak."""
+    global _jwks_client, _jwks_url_cached
+    try:
+        from jwt import PyJWKClient  # PyJWT >= 2.4
+
+        url = f"{_internal_realm_url()}/protocol/openid-connect/certs"
+        if _jwks_client is None or _jwks_url_cached != url:
+            _jwks_client = PyJWKClient(url, cache_keys=True)
+            _jwks_url_cached = url
+        return _jwks_client
+    except Exception:
+        return None
+
+
 def _decode_jwt_payload(token: str) -> dict:
     """
-    Décode le payload d'un JWT sans vérification de signature.
-    Le token a déjà été validé par Keycloak lors de l'échange du code.
+    Vérifie la signature JWT via les clés publiques Keycloak (JWKS) puis décode
+    le payload. Fallback en base64 pur si JWKS indisponible (Keycloak down).
+    Si JWKS disponible mais signature invalide → retourne {} (rejet).
     """
+    # ── Vérification cryptographique (primary path) ────────────────────────────
+    client = _get_jwks_client()
+    if client is not None:
+        try:
+            import jwt as _pyjwt
+            from jwt.exceptions import InvalidTokenError
+
+            signing_key = client.get_signing_key_from_jwt(token)
+            return _pyjwt.decode(
+                token,
+                signing_key.key,
+                algorithms=["RS256"],
+                audience=_settings().OIDC_CLIENT_ID,
+                options={"verify_exp": True},
+            )
+        except InvalidTokenError:
+            return {}  # Signature invalide ou token expiré → rejet
+        except Exception:
+            pass  # Erreur réseau / JWKS indisponible → fallback
+
+    # ── Fallback : base64 pur (JWKS non disponible) ──────────────────────────
     import base64
     import json as _json
 
     try:
         payload_b64 = token.split(".")[1]
-        # Padding Base64URL → Base64
         payload_b64 += "=" * (4 - len(payload_b64) % 4)
         return _json.loads(base64.urlsafe_b64decode(payload_b64))
     except Exception:

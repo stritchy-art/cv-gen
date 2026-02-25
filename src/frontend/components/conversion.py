@@ -1,11 +1,31 @@
 """Composant de conversion et traitement des CV"""
 
+import hashlib
+
 import requests
 import streamlit as st
 from components.history import get_cv_from_history, save_cv_to_history
 from components.translations import t
 
 from config.logging_config import app_logger
+
+
+def _api_headers() -> dict:
+    """Headers d'authentification pour les appels au backend."""
+    try:
+        from config.settings import get_settings
+
+        token = get_settings().BACKEND_API_TOKEN
+        if token:
+            return {"X-API-Token": token}
+    except Exception:
+        pass
+    return {}
+
+
+def _anon(name: str) -> str:
+    """Anonymise un nom de fichier pour les logs (anti-PII)."""
+    return hashlib.sha256(name.encode()).hexdigest()[:10]
 
 
 def process_conversion(
@@ -82,7 +102,7 @@ def process_conversion(
                 if cached_entry:
                     # Utiliser les données du cache sans rappeler l'API
                     app_logger.info(
-                        f"CV {uploaded_file.name} trouvé en cache avec ces options"
+                        f"CV {_anon(uploaded_file.name)} trouvé en cache avec ces options"
                     )
                     progress_bar.progress(base_progress + step_size)
 
@@ -147,7 +167,11 @@ def process_conversion(
                     form_data["target_language"] = target_language
 
                 response = requests.post(
-                    f"{api_url}/api/convert", files=files, data=form_data, timeout=300
+                    f"{api_url}/api/convert",
+                    files=files,
+                    data=form_data,
+                    headers=_api_headers(),
+                    timeout=300,
                 )
 
                 # Étape 3: Traitement de la réponse
@@ -163,6 +187,7 @@ def process_conversion(
                         # Télécharger via l'ID (pas de reconversion)
                         download_response = requests.get(
                             f"{api_url}/api/convert/{conversion_id}/download",
+                            headers=_api_headers(),
                             timeout=30,
                         )
                     else:
@@ -191,13 +216,13 @@ def process_conversion(
                                 },
                             )
                             app_logger.info(
-                                f"CV {uploaded_file.name} sauvegardé dans l'historique"
+                                f"CV {_anon(uploaded_file.name)} sauvegardé dans l'historique"
                             )
                         except Exception as e:
                             app_logger.error(f"Erreur sauvegarde historique: {e}")
                     else:
                         app_logger.warning(
-                            f"Pas de cv_data pour {uploaded_file.name}, historique non sauvegardé"
+                            f"Pas de cv_data pour {_anon(uploaded_file.name)}, historique non sauvegardé"
                         )
 
                     # Stocker les résultats avec le contenu binaire au lieu de l'objet Response
@@ -279,5 +304,6 @@ def _fallback_download(api_url, uploaded_file, job_offer_file, improvement_mode)
         f"{api_url}/api/convert/download",
         files=fallback_files,
         data={"improvement_mode": improvement_mode},
+        headers=_api_headers(),
         timeout=300,
     )
