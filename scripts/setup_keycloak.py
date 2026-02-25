@@ -205,38 +205,83 @@ def configure_azure_ad_idp(token: str) -> None:
         )
         return
 
-    # Keycloak a un provider natif 'microsoft' pour Azure AD
+    # Provider OIDC générique — n'appelle PAS Microsoft Graph API.
+    # Le provider natif "microsoft" de Keycloak appelle Graph /v1.0/me
+    # et exige la permission User.Read, ce qui n'est pas nécessaire ici.
+    # Avec "oidc", on utilise l'endpoint /openid/userinfo standard.
+    #
+    # IMPORTANT : ne jamais relire clientSecret via GET puis réécrire —
+    # Keycloak masque le secret en lecture ("**********"). On écrit
+    # toujours AZURE_CLIENT_SECRET directement depuis les settings.
+    idp_payload = {
+        "alias": "microsoft",
+        "displayName": "Se connecter avec Microsoft",
+        "providerId": "oidc",
+        "enabled": True,
+        "trustEmail": True,
+        "storeToken": False,
+        "addReadTokenRoleOnCreate": False,
+        "firstBrokerLoginFlowAlias": "first broker login",
+        "config": {
+            "clientId": AZURE_CLIENT_ID,
+            "clientSecret": AZURE_CLIENT_SECRET,  # valeur brute, jamais relue via GET
+            "authorizationUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/authorize",
+            "tokenUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/token",
+            "userInfoUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/openid/userinfo",
+            "jwksUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/discovery/v2.0/keys",
+            "issuer": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/v2.0",
+            "validateSignature": "true",
+            "useJwksUrl": "true",
+            "defaultScope": "openid email profile",
+            "syncMode": "IMPORT",
+            "pkceEnabled": "false",
+        },
+    }
     resp = requests.post(
         f"{KEYCLOAK_URL}/admin/realms/{REALM_NAME}/identity-provider/instances",
-        json={
-            "alias": "microsoft",
-            "displayName": "Se connecter avec Microsoft",
-            "providerId": "microsoft",
-            "enabled": True,
-            "trustEmail": True,
-            "storeToken": False,
-            "addReadTokenRoleOnCreate": False,
-            "config": {
-                "clientId": AZURE_CLIENT_ID,
-                "clientSecret": AZURE_CLIENT_SECRET,
-                # tenantId force l'endpoint tenant-specific au lieu de /common
-                # (obligatoire pour les apps mono-tenant créées après 10/2018)
-                "tenantId": AZURE_TENANT_ID,
-                "tenant": AZURE_TENANT_ID,
-                "authorizationUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/authorize",
-                "tokenUrl": f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2/v2.0/token",
-                "defaultScope": "openid email profile",
-                "syncMode": "IMPORT",
-            },
-        },
+        json=idp_payload,
         headers=admin_headers(token),
         timeout=15,
     )
     if resp.status_code == 409:
-        print("   ℹ️  Identity Provider 'microsoft' existe déjà.")
+        print("   ℹ️  Identity Provider 'microsoft' existe déjà — mise à jour du secret.")
+        # En cas d'update : on PUT pour écraser avec le bon secret
+        resp_put = requests.put(
+            f"{KEYCLOAK_URL}/admin/realms/{REALM_NAME}/identity-provider/instances/microsoft",
+            json=idp_payload,
+            headers=admin_headers(token),
+            timeout=15,
+        )
+        resp_put.raise_for_status()
+        print("   ✓ Identity Provider mis à jour.")
+        return
     else:
         resp.raise_for_status()
-        print("   ✓ Identity Provider Azure AD/Microsoft configuré.")
+        print("   ✓ Identity Provider Azure AD/Microsoft (OIDC) configuré.")
+
+    # Ajout des mappers OIDC claims → attributs Keycloak
+    mappers = [
+        {"name": "email", "identityProviderMapper": "oidc-user-attribute-idp-mapper",
+         "config": {"claim": "email", "user.attribute": "email", "syncMode": "INHERIT"}},
+        {"name": "name", "identityProviderMapper": "oidc-user-attribute-idp-mapper",
+         "config": {"claim": "name", "user.attribute": "displayName", "syncMode": "INHERIT"}},
+        {"name": "given_name", "identityProviderMapper": "oidc-user-attribute-idp-mapper",
+         "config": {"claim": "given_name", "user.attribute": "firstName", "syncMode": "INHERIT"}},
+        {"name": "family_name", "identityProviderMapper": "oidc-user-attribute-idp-mapper",
+         "config": {"claim": "family_name", "user.attribute": "lastName", "syncMode": "INHERIT"}},
+        {"name": "username", "identityProviderMapper": "oidc-username-idp-mapper",
+         "config": {"template": "${CLAIM.email}", "syncMode": "INHERIT"}},
+    ]
+    for m in mappers:
+        m["identityProviderAlias"] = "microsoft"
+        r_m = requests.post(
+            f"{KEYCLOAK_URL}/admin/realms/{REALM_NAME}/identity-provider/instances/microsoft/mappers",
+            headers=admin_headers(token), json=m, timeout=10,
+        )
+        if r_m.status_code not in (200, 201, 204):
+            print(f"   ⚠️  Mapper '{m['name']}' : {r_m.status_code}")
+        else:
+            print(f"   ✓ Mapper '{m['name']}' ajouté.")
 
 
 def set_idp_as_default(token: str) -> None:
