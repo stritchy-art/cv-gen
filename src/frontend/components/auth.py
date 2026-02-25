@@ -131,7 +131,8 @@ def _decode_jwt_payload(token: str) -> dict:
     Décode le payload d'un JWT sans vérification de signature.
     Le token a déjà été validé par Keycloak lors de l'échange du code.
     """
-    import base64, json as _json
+    import base64
+    import json as _json
 
     try:
         payload_b64 = token.split(".")[1]
