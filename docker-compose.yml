@@ -43,8 +43,12 @@ services:
       - "8501:8501"
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-production}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_API_BASE_URL=${AI_API_BASE_URL:-https://oai.endpoints.kepler.ai.cloud.ovh.net/v1}
+      - AI_MODEL=${AI_MODEL:-Mistral-Small-3.2-24B-Instruct-2506}
       - API_HOST=backend
       - API_PORT=8000
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
       backend:
         condition: service_healthy
