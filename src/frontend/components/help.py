@@ -6,8 +6,7 @@ import streamlit as st
 def render_user_guide() -> None:
     """Affiche le guide utilisateur dans un expander rétractable."""
     with st.expander("📖 Guide d'utilisation", expanded=False):
-        st.markdown(
-            """
+        st.markdown("""
 ## Comment utiliser CV Generator
 
 CV Generator convertit vos CV PDF ou DOCX en documents Word professionnels,
@@ -149,5 +148,4 @@ Langues disponibles : 🇫🇷 Français · 🇬🇧 English · 🇮🇹 Italian
 ---
 
 *Pour toute question technique, contactez votre administrateur.*
-"""
-        )
+""")

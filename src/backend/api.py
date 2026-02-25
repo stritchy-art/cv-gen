@@ -15,7 +15,16 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Security, UploadFile, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Security,
+    UploadFile,
+    status,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import APIKeyHeader
@@ -57,6 +66,7 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
 
 # ── Sécurité API ──────────────────────────────────────────────────────────────
 def _anon(name: str) -> str:
@@ -102,7 +112,11 @@ async def health_check():
     return HealthCheck(status="healthy", version=settings.APP_VERSION)
 
 
-@app.post("/api/convert", response_model=ConversionResponse, dependencies=[Depends(_verify_api_token)])
+@app.post(
+    "/api/convert",
+    response_model=ConversionResponse,
+    dependencies=[Depends(_verify_api_token)],
+)
 async def convert_cv(
     file: UploadFile = File(..., description=t("file_description", lang="fr")),
     generate_pitch: str = Form("true"),
@@ -280,7 +294,9 @@ async def convert_cv(
 
         # Stocker en cache avec un timestamp (taille bornée à _MAX_CACHE_SIZE)
         if len(conversion_cache) >= _MAX_CACHE_SIZE:
-            oldest = min(conversion_cache, key=lambda k: conversion_cache[k]["timestamp"])
+            oldest = min(
+                conversion_cache, key=lambda k: conversion_cache[k]["timestamp"]
+            )
             del conversion_cache[oldest]
         conversion_cache[conversion_id] = {
             "docx_path": docx_path,
@@ -437,7 +453,9 @@ async def convert_and_download_cv(
             Path(temp_job_offer).unlink()
 
 
-@app.get("/api/convert/{conversion_id}/download", dependencies=[Depends(_verify_api_token)])
+@app.get(
+    "/api/convert/{conversion_id}/download", dependencies=[Depends(_verify_api_token)]
+)
 async def download_from_cache(conversion_id: str):
     """Téléchargement depuis le cache (pas de reconversion)"""
 
