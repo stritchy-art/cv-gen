@@ -6,8 +6,9 @@
 # Traitement PDF
 pdfplumber>=0.10.0
 
-# Génération de fichiers Word
+# Génération et extraction de fichiers Word
 python-docx>=1.1.0
+docx2txt>=0.8
 
 # API OpenAI pour le LLM
 openai>=1.0.0
