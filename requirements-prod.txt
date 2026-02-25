@@ -37,6 +37,9 @@ requests>=2.31.0
 # Variables d'environnement
 python-dotenv>=1.0.0
 
+# === Cache ===
+diskcache>=5.6.3
+
 # === Utilities ===
 
 # Gestion de fichiers
