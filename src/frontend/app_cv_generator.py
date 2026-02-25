@@ -16,6 +16,7 @@ from components.auth import render_user_info, require_auth
 
 # Import des composants
 from components.conversion import process_conversion
+from components.help import render_user_guide
 from components.history import get_cv_from_history, render_history_sidebar
 from components.options import render_processing_options
 from components.rate_calculator import display_rate_calculator
@@ -56,6 +57,7 @@ apply_custom_styles()
 
 # En-tête
 st.title(t("app_title"))
+render_user_guide()
 
 # Vérifier la santé de l'API
 if not display_api_status(API_URL):
