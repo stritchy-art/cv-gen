@@ -12,6 +12,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from components.api_utils import display_api_status
+from components.auth import render_user_info, require_auth
 
 # Import des composants
 from components.conversion import process_conversion
@@ -35,6 +36,15 @@ st.set_page_config(
 
 # Sélecteur de langue dans la sidebar
 render_language_selector()
+
+# ── Authentification OIDC (Keycloak / Azure AD) ──────────────────────────────
+# Si KEYCLOAK_ENABLED=False (défaut en dev), retourne un utilisateur fictif.
+# En production, redirige vers Keycloak si non authentifié.
+user_info = require_auth()
+if user_info is None:
+    st.stop()
+
+render_user_info(user_info)
 
 # Afficher l'historique et récupérer le CV sélectionné depuis la sidebar
 selected_cv = render_history_sidebar()

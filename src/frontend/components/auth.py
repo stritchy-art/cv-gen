@@ -1,66 +1,285 @@
-"""Composant d'authentification"""
+"""
+Authentification OIDC via Keycloak / Azure AD Entra ID.
 
+Flow complet :
+  1. L'utilisateur visite /cv-generator
+  2. require_auth() détecte qu'il n'est pas authentifié → affiche page de connexion
+  3. Clic sur « Se connecter avec Microsoft » → redirection vers Keycloak
+  4. Keycloak fédère avec Azure AD (Identity Provider « Microsoft »)
+  5. Azure AD redirige vers Keycloak, qui redirige vers /cv-generator?code=…&state=…
+  6. require_auth() échange le code contre des tokens
+     (appel server-side container→Keycloak via URL Docker interne)
+  7. Infos utilisateur stockées dans st.session_state
+  8. render_user_info() affiche l'identité + bouton déconnexion dans la sidebar
+
+Si KEYCLOAK_ENABLED=False (par défaut en dev), l'auth est désactivée.
+"""
+
+import os
+import time
+from typing import Optional
+from urllib.parse import urlencode
+
+import requests
 import streamlit as st
-from components.translations import t
-
-from config.logging_config import app_logger
 
 
-def check_password() -> bool:
+# ──────────────────────────────────────────────────────────────────────────────
+# Helpers internes
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _settings():
+    """Import lazy pour éviter les dépendances circulaires."""
+    from config.settings import get_settings
+
+    return get_settings()
+
+
+def _external_realm_url() -> str:
+    """URL Keycloak accessible depuis le navigateur (passe par Nginx/HTTPS)."""
+    s = _settings()
+    return f"{s.KEYCLOAK_EXTERNAL_URL}/realms/{s.KEYCLOAK_REALM}"
+
+
+def _internal_realm_url() -> str:
+    """URL Keycloak pour les appels container-à-container (réseau Docker)."""
+    s = _settings()
+    return f"{s.KEYCLOAK_INTERNAL_URL}/realms/{s.KEYCLOAK_REALM}"
+
+
+def _build_auth_url(state: str) -> str:
+    """Construit l'URL d'autorisation OIDC que le navigateur doit suivre."""
+    s = _settings()
+    params = {
+        "response_type": "code",
+        "client_id": s.OIDC_CLIENT_ID,
+        "redirect_uri": s.OIDC_REDIRECT_URI,
+        "scope": "openid email profile",
+        "state": state,
+    }
+    return f"{_external_realm_url()}/protocol/openid-connect/auth?{urlencode(params)}"
+
+
+def _exchange_code_for_tokens(code: str) -> Optional[dict]:
     """
-    Vérifie l'authentification de l'utilisateur.
-
-    Returns:
-        bool: True si l'utilisateur est authentifié, False sinon
+    Échange le code OAuth contre des tokens (appel server-side container→Keycloak).
+    Utilise l'URL Docker interne pour éviter de passer par Nginx/internet.
     """
-
-    # Vérifier si l'authentification est désactivée (mode dev)
+    s = _settings()
     try:
-        if st.secrets.get("auth_disabled", False):
-            st.session_state["authenticated"] = True
-            st.session_state["username"] = "dev"
-            return True
-    except:
-        pass
-
-    # Si déjà authentifié
-    if st.session_state.get("authenticated", False):
-        return True
-
-    # Formulaire de connexion
-    st.markdown(f"## {t('auth_required')}")
-
-    with st.form("login_form"):
-        username = st.text_input(t("username"), key="username_input")
-        password = st.text_input(t("password"), type="password", key="password_input")
-        submit = st.form_submit_button(t("login"))
-
-        if submit:
-            # Vérifier les credentials
-            try:
-                passwords = st.secrets.get("passwords", {})
-                if username in passwords and passwords[username] == password:
-                    st.session_state["authenticated"] = True
-                    st.session_state["username"] = username
-                    st.success(t("login_success"))
-                    st.rerun()
-                else:
-                    st.error(t("login_error"))
-            except Exception as e:
-                st.error("❌ Erreur de configuration de l'authentification")
-                app_logger.error(f"Erreur authentification: {str(e)}")
-
-    st.info(t("contact_admin"))
-    return False
-
-
-def render_logout_button():
-    """Affiche le bouton de déconnexion dans la sidebar"""
-    with st.sidebar:
-        st.markdown(
-            f"**{t('connected_as')}** {st.session_state.get('username', 'N/A')}"
+        resp = requests.post(
+            f"{_internal_realm_url()}/protocol/openid-connect/token",
+            data={
+                "grant_type": "authorization_code",
+                "client_id": s.OIDC_CLIENT_ID,
+                "client_secret": s.OIDC_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": s.OIDC_REDIRECT_URI,
+            },
+            timeout=15,
         )
-        if st.button(t("logout")):
-            st.session_state["authenticated"] = False
-            st.session_state["username"] = None
+        if resp.status_code == 200:
+            return resp.json()
+        st.error(
+            f"⚠️ Keycloak a refusé l'échange du code "
+            f"(HTTP {resp.status_code}) : {resp.text}"
+        )
+    except requests.exceptions.ConnectionError:
+        st.error(
+            "⚠️ Impossible de joindre Keycloak en interne (`http://keycloak:8080`). "
+            "Vérifiez que le container Keycloak est démarré et connecté au même réseau Docker."
+        )
+    except Exception as exc:
+        st.error(f"⚠️ Erreur lors de l'échange du code OAuth : {exc}")
+    return None
+
+
+def _fetch_user_info(access_token: str) -> Optional[dict]:
+    """Récupère le profil utilisateur depuis le endpoint userinfo de Keycloak."""
+    try:
+        resp = requests.get(
+            f"{_internal_realm_url()}/protocol/openid-connect/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception as exc:
+        st.error(f"⚠️ Impossible de récupérer le profil utilisateur : {exc}")
+    return None
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# API publique
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def require_auth() -> Optional[dict]:
+    """
+    Point d'entrée principal de l'authentification.
+
+    Comportements :
+    - KEYCLOAK_ENABLED=False → retourne un utilisateur fictif (mode dev local)
+    - Session valide         → retourne les infos utilisateur depuis session_state
+    - Callback OAuth reçu   → échange le code, stocke la session, st.rerun()
+    - Non authentifié       → affiche la page de connexion, retourne None
+
+    Usage recommandé dans app_cv_generator.py :
+        user_info = require_auth()
+        if user_info is None:
+            st.stop()
+    """
+    s = _settings()
+
+    # ── Mode développement (auth désactivée) ─────────────────────────────────
+    if not s.KEYCLOAK_ENABLED:
+        return {
+            "name": "Dev User",
+            "email": "dev@localhost",
+            "preferred_username": "dev",
+        }
+
+    # ── Session encore valide ? ──────────────────────────────────────────────
+    if "user_info" in st.session_state:
+        if time.time() < st.session_state.get("token_expiry", 0):
+            return st.session_state["user_info"]
+        # Token expiré → purge session
+        for key in ("user_info", "tokens", "token_expiry"):
+            st.session_state.pop(key, None)
+
+    # ── Callback OAuth (code + state présents dans l'URL) ? ──────────────────
+    params = st.query_params
+    if "code" in params and "state" in params:
+        code = params["code"]
+        state = params["state"]
+
+        # Vérification CSRF
+        if state != st.session_state.get("oauth_state"):
+            st.error(
+                "⚠️ Paramètre `state` invalide — possible tentative CSRF. "
+                "Veuillez relancer la connexion."
+            )
+            st.session_state.pop("oauth_state", None)
+            if st.button("🔄 Réessayer"):
+                st.rerun()
+            return None
+
+        with st.spinner("Authentification en cours…"):
+            tokens = _exchange_code_for_tokens(code)
+
+        if tokens:
+            user_info = _fetch_user_info(tokens["access_token"])
+            if user_info:
+                st.session_state["user_info"] = user_info
+                st.session_state["tokens"] = tokens
+                # Marge de 30 s pour éviter un token périmé en cours de requête
+                st.session_state["token_expiry"] = (
+                    time.time() + tokens.get("expires_in", 300) - 30
+                )
+                st.session_state.pop("oauth_state", None)
+                st.query_params.clear()
+                st.rerun()
+                return None  # st.rerun() lève une exception, mais sécurité
+
+        if st.button("🔄 Réessayer la connexion"):
+            st.session_state.pop("oauth_state", None)
             st.rerun()
+        return None
+
+    # ── Non authentifié → page de connexion ──────────────────────────────────
+    _render_login_page()
+    return None
+
+
+def render_user_info(user_info: dict) -> None:
+    """
+    Affiche l'identité de l'utilisateur connecté + bouton déconnexion dans la sidebar.
+    À appeler après require_auth() si user_info n'est pas None.
+    """
+    with st.sidebar:
+        st.divider()
+        name = (
+            user_info.get("name")
+            or user_info.get("preferred_username")
+            or "Utilisateur"
+        )
+        email = user_info.get("email", "")
+        st.markdown(f"👤 **{name}**")
+        if email:
+            st.caption(email)
+        if st.button("🚪 Se déconnecter", use_container_width=True, key="logout_btn"):
+            _do_logout()
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Helpers UI privés
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _render_login_page() -> None:
+    """Affiche la page de connexion avec le bouton 'Se connecter avec Microsoft'."""
+    st.markdown(
+        """
+        <div style="display:flex;flex-direction:column;align-items:center;
+                    padding:60px 20px 40px;text-align:center;">
+            <h2 style="margin-bottom:8px;">🔐 Connexion requise</h2>
+            <p style="color:#666;font-size:1.05em;max-width:480px;">
+                Veuillez vous connecter avec votre compte
+                <strong>Microsoft / Azure AD Entra ID</strong>
+                pour accéder à <strong>CV Generator</strong>.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if "oauth_state" not in st.session_state:
+        st.session_state["oauth_state"] = os.urandom(16).hex()
+
+    try:
+        auth_url = _build_auth_url(st.session_state["oauth_state"])
+        st.markdown(
+            f"""
+            <div style="display:flex;justify-content:center;margin-top:8px;">
+                <a href="{auth_url}" target="_self" style="text-decoration:none;">
+                    <button style="
+                        background:#0078D4;color:#fff;border:none;
+                        padding:14px 36px;border-radius:6px;font-size:16px;
+                        cursor:pointer;font-weight:600;
+                        box-shadow:0 3px 10px rgba(0,120,212,.35);">
+                        🔑 &nbsp;Se connecter avec Microsoft
+                    </button>
+                </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    except Exception as exc:
+        st.error(f"⚠️ Impossible de contacter Keycloak : {exc}")
+        st.info("Vérifiez que le container Keycloak est démarré : `sudo docker compose ps`")
+
+
+def _do_logout() -> None:
+    """Révoque les tokens côté Keycloak (best-effort) et nettoie la session."""
+    s = _settings()
+    tokens = st.session_state.pop("tokens", {})
+    for key in ("user_info", "token_expiry", "oauth_state"):
+        st.session_state.pop(key, None)
+
+    refresh_token = tokens.get("refresh_token", "")
+    if refresh_token:
+        try:
+            requests.post(
+                f"{_internal_realm_url()}/protocol/openid-connect/logout",
+                data={
+                    "client_id": s.OIDC_CLIENT_ID,
+                    "client_secret": s.OIDC_CLIENT_SECRET,
+                    "refresh_token": refresh_token,
+                },
+                timeout=5,
+            )
+        except Exception:
+            pass  # Logout best-effort, on nettoie quand même la session locale
+
+    st.rerun()

@@ -48,6 +48,13 @@ services:
       - AI_MODEL=${AI_MODEL:-Mistral-Small-3.2-24B-Instruct-2506}
       - API_HOST=backend
       - API_PORT=8000
+      - KEYCLOAK_ENABLED=${KEYCLOAK_ENABLED:-false}
+      - KEYCLOAK_EXTERNAL_URL=${KEYCLOAK_EXTERNAL_URL:-https://94.23.185.97/auth}
+      - KEYCLOAK_INTERNAL_URL=${KEYCLOAK_INTERNAL_URL:-http://keycloak:8080/auth}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-cv-generator}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-cv-generator-app}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
+      - OIDC_REDIRECT_URI=${OIDC_REDIRECT_URI:-https://94.23.185.97/cv-generator}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
       backend:
@@ -60,6 +67,33 @@ services:
       start_period: 30s
     networks:
       - cv-network
+
+  # Keycloak - Identity & Access Management (OIDC broker vers Azure AD)
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    container_name: cv-generator-keycloak
+    restart: unless-stopped
+    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-change_me_in_production}
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY_HEADERS=xforwarded
+      - KC_HTTP_RELATIVE_PATH=/auth
+      - KC_HOSTNAME_URL=https://94.23.185.97/auth
+      - KC_HOSTNAME_ADMIN_URL=https://94.23.185.97/auth
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - cv-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/auth/health/ready || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 90s
 
   # Nginx Reverse Proxy (optionnel)
   nginx:
@@ -88,3 +122,4 @@ volumes:
   logs:
   cache:
   uploads:
+  keycloak_data:

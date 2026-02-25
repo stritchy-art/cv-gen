@@ -88,7 +88,50 @@ class Settings(BaseSettings):
     
     # Frontend (Streamlit)
     FRONTEND_PORT: int = Field(default=8501, description="Port du frontend Streamlit")
-    
+
+    # ── Authentification OIDC / Keycloak ──────────────────────────────────────
+    KEYCLOAK_ENABLED: bool = Field(
+        default=False,
+        description="Activer l'authentification Keycloak OIDC (False en dev, True en prod)",
+    )
+    KEYCLOAK_EXTERNAL_URL: str = Field(
+        default="https://94.23.185.97/auth",
+        description="URL externe Keycloak accessible depuis le navigateur",
+    )
+    KEYCLOAK_INTERNAL_URL: str = Field(
+        default="http://keycloak:8080/auth",
+        description="URL interne Keycloak pour les appels container-à-container",
+    )
+    KEYCLOAK_REALM: str = Field(default="cv-generator", description="Realm Keycloak")
+    OIDC_CLIENT_ID: str = Field(
+        default="cv-generator-app",
+        description="Client ID de l'application dans Keycloak",
+    )
+    OIDC_CLIENT_SECRET: str = Field(
+        default="",
+        description="Secret du client OIDC (généré par Keycloak après setup)",
+    )
+    OIDC_REDIRECT_URI: str = Field(
+        default="https://94.23.185.97/cv-generator",
+        description="URI de redirection OAuth (doit correspondre à la config Keycloak)",
+    )
+
+    # ── Azure AD / Entra ID ────────────────────────────────────────────────────
+    # Ces valeurs servent uniquement au script scripts/setup_keycloak.py
+    # pour configurer l'Identity Provider dans Keycloak.
+    AZURE_CLIENT_ID: str = Field(
+        default="193e2c6d-d167-4d28-8ee0-098313006299",
+        description="Application (client) ID Azure AD - CV Generator",
+    )
+    AZURE_TENANT_ID: str = Field(
+        default="",
+        description="Directory (tenant) ID Azure AD (Portal > Entra ID > Propriétés)",
+    )
+    AZURE_CLIENT_SECRET: str = Field(
+        default="",
+        description="Client secret Azure AD (Portal > App registrations > Certificates & secrets)",
+    )
+
     # Limites
     MAX_FILE_SIZE_MB: int = Field(default=10, description="Taille maximale des fichiers en MB")
     MAX_PAGES_PDF: int = Field(default=20, description="Nombre maximum de pages PDF")
