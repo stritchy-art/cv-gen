@@ -41,6 +41,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=t("api_description", lang="fr"),
+    root_path="/cv-generator/api",
 )
 
 # CORS
