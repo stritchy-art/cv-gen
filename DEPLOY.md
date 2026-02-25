@@ -4,8 +4,9 @@
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- 2GB RAM minimum
-- Clé API OpenAI valide
+- 2 GB RAM minimum (4 GB recommandés avec Keycloak)
+- Clé API OVH AI Endpoints valide
+- (En production) Compte Azure AD Entra ID pour l'authentification
 
 ## 📦 Déploiement rapide
 
@@ -13,12 +14,12 @@
 
 ```bash
 # Cloner le projet
-git clone <repo-url>
+git clone https://github.com/stritchy-art/cv-gen.git
 cd cv_gen
 
 # Copier et configurer .env
 cp .env.example .env
-nano .env  # Éditer et ajouter votre OPENAI_API_KEY
+nano .env  # Éditer AI_API_KEY, OIDC_CLIENT_SECRET, etc.
 ```
 
 ### 2. Lancement automatique
@@ -76,14 +77,30 @@ docker-compose --profile with-nginx up -d
 Créez un fichier `.env` à la racine :
 
 ```env
-# Obligatoire
-OPENAI_API_KEY=sk-...
+# --- OVH AI ---
+AI_API_KEY=votre_cle_ovh_ai
+AI_API_BASE_URL=https://oai.endpoints.kepler.ai.cloud.ovh.net/v1
+AI_MODEL=Llama-3.3-70B-Instruct
 
-# Optionnel
+# --- Application ---
 ENVIRONMENT=production
-OPENAI_MODEL=gpt-5-mini
 LOG_LEVEL=INFO
+APP_TITLE=CV Generator
+
+# --- Auth Keycloak (prod) ---
+KEYCLOAK_ENABLED=true
+KEYCLOAK_URL=https://94.23.185.97/auth
+KEYCLOAK_REALM=cv-generator
+OIDC_CLIENT_ID=cv-generator-app
+OIDC_CLIENT_SECRET=votre_secret_client_keycloak
+OIDC_REDIRECT_URI=https://94.23.185.97/cv-generator
+
+# --- Keycloak admin ---
+KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=votre_mot_de_passe_admin
 ```
+
+> **Dev local** : mettre `KEYCLOAK_ENABLED=false` pour bypasser l'authentification.
 
 ## 🔧 Commandes utiles
 
@@ -231,14 +248,29 @@ docker-compose logs -f backend --tail=100
 
 ## 🐛 Dépannage
 
+### Keycloak / Authentification
+
+Voir **[KEYCLOAK.md](KEYCLOAK.md)** pour le guide complet.
+
+```bash
+# Vérifier que Keycloak est healthy
+docker compose ps
+
+# Logs Keycloak
+docker compose logs keycloak --tail=50
+
+# Re-configurer le realm après perte de volume
+python scripts/setup_keycloak.py
+```
+
 ### Le backend ne démarre pas
 
 ```bash
 # Voir les logs
-docker-compose logs backend
+docker compose logs backend
 
 # Vérifier les variables d'environnement
-docker-compose exec backend env | grep OPENAI
+docker compose exec backend env | grep AI_API
 ```
 
 ### Le frontend ne se connecte pas à l'API

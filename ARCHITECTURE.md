@@ -1,8 +1,125 @@
-# CV Generator - Architecture Industrielle
+# CV Generator - Architecture
 
-## 🏗️ Architecture
+## Vue d'ensemble
 
-Le projet suit une architecture **backend/frontend séparée** pour une meilleure scalabilité et maintenabilité.
+Architecture **backend/frontend séparée** avec authentification OIDC via Keycloak.
+
+```
+cv_gen/
+├── src/
+│   ├── backend/               # API FastAPI
+│   │   ├── api.py             # Endpoints REST
+│   │   ├── models.py          # Modèles Pydantic
+│   │   ├── service.py         # Logique métier
+│   │   └── translations.py    # i18n backend
+│   └── frontend/              # Interface Streamlit
+│       ├── app_cv_generator.py  # Point d'entrée principal
+│       └── components/
+│           ├── auth.py          # Authentification OIDC / Keycloak
+│           ├── api_utils.py     # Appels API backend
+│           ├── conversion.py    # Traitement de conversion
+│           ├── history.py       # Historique des CV
+│           ├── options.py       # Options de traitement
+│           ├── rate_calculator.py  # Calcul TJM
+│           ├── results.py       # Affichage résultats
+│           ├── styles.py        # CSS personnalisé
+│           ├── translations.py  # i18n frontend
+│           └── upload.py        # Upload fichiers
+├── core/                      # Modules métier
+│   ├── agent.py               # Orchestration IA
+│   ├── pdf_extractor.py       # Extraction PDF
+│   ├── docx_extractor.py      # Extraction DOCX
+│   └── docx_generator.py      # Génération DOCX
+├── config/                    # Configuration centralisée
+│   ├── settings.py            # Variables d'env (Pydantic-settings)
+│   └── logging_config.py      # Logging rotatif
+├── scripts/
+│   └── setup_keycloak.py      # Configuration automatique Keycloak
+├── tests/                     # Tests unitaires (102 tests)
+├── assets/                    # Templates HTML de référence
+├── logs/                      # Logs rotatifs
+├── cache/                     # Cache LLM (diskcache)
+└── uploads/                   # Fichiers uploadés
+```
+
+## Conteneurs Docker
+
+```
+┌────────────────────┐  HTTPS :443   ┌────────────────────┐
+│  Nginx (host)         ├────────── /cv-generator  │  Frontend :8501     │
+│  /etc/nginx/sites-.. ├────────── /auth          │  Streamlit          │
+└────────────────────┘              │  Keycloak :8080     │
+                                   │  Backend  :8000     │
+                                   └────────────────────┘
+                                        réseau cv-network
+```
+
+| Service | Image | Rôle |
+|---------|-------|------|
+| `backend` | cv_gen-backend | API FastAPI, conversion PDF/DOCX, appels OVH AI |
+| `frontend` | cv_gen-frontend | Interface Streamlit, auth OIDC |
+| `keycloak` | keycloak:25.0.6 | Broker OIDC, fédère avec Azure AD Entra ID |
+
+## Flux d'authentification
+
+Voir [KEYCLOAK.md](KEYCLOAK.md) pour le détail complet.
+
+```
+Navigateur → Streamlit → Keycloak → Azure AD Entra ID
+                ←──────────────────────────
+                id_token JWT (name, email, sub)
+```
+
+## Endpoints API
+
+| Méthode | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Santé de l'API |
+| `POST` | `/api/convert` | Conversion CV → métadonnées JSON |
+| `POST` | `/api/convert/download` | Conversion CV → fichier DOCX |
+
+## Variables d'environnement clés
+
+| Variable | Service | Description |
+|----------|---------|-------------|
+| `AI_API_KEY` | backend, frontend | Clé API OVH AI |
+| `AI_API_BASE_URL` | backend, frontend | URL endpoint OVH AI |
+| `API_HOST` | frontend | Hôte du backend (= `backend` en Docker) |
+| `KEYCLOAK_ENABLED` | frontend | `true` en prod, `false` en dev |
+| `OIDC_CLIENT_SECRET` | frontend | Secret client Keycloak |
+| `KEYCLOAK_ADMIN_PASSWORD` | keycloak | Mot de passe console admin |
+
+## Sécurité
+
+- Authentification OIDC obligatoire en production (`KEYCLOAK_ENABLED=true`)
+- En développement local (`KEYCLOAK_ENABLED=false`) : utilisateur fictif `Dev User`
+- Tokens JWT validés par Keycloak, expiration respectée
+- CSRF protection via nonce serveur-side (TTL 10 min)
+- Secrets injectés via variables d'environnement, jamais en dur dans le code
+- TLS/HTTPS via Nginx (certificat auto-signé ou Let's Encrypt)
+
+## Tests
+
+```bash
+# Tous les tests
+pytest
+
+# Avec couverture
+pytest --cov=src --cov=core tests/
+
+# Un module spécifique
+pytest tests/test_service.py -v
+```
+
+102 tests, couverture ~64%.
+
+## Logging
+
+- `logs/app.log` : Logs généraux
+- `logs/api.log` : Requêtes API
+- `logs/conversion.log` : Conversions CV
+
+Rotation automatique à 10 MB, 5 fichiers de backup.
 
 ```
 cv_gen/

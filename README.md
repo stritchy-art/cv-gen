@@ -1,7 +1,8 @@
 # 🚀 CV Generator - Convertisseur Intelligent de CV
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-green.svg)](https://openai.com/)
+[![OVH AI](https://img.shields.io/badge/OVH%20AI-Endpoints-blue.svg)](https://endpoints.ai.cloud.ovh.net/)
+[![Keycloak](https://img.shields.io/badge/auth-Keycloak%2FAzure%20AD-orange.svg)](KEYCLOAK.md)
 [![Tests](https://img.shields.io/badge/tests-102%20passed-success.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/coverage-64%25-yellow.svg)](htmlcov/index.html)
 
@@ -12,7 +13,8 @@ Système automatisé professionnel qui transforme vos CV PDF/DOCX en documents W
 ### 🎯 Fonctionnalités Principales
 
 - ✅ **Extraction Multi-Format** : PDF, DOCX et DOC supportés
-- ✅ **Analyse IA Avancée** : Structuration intelligente via GPT-4o/GPT-4o-mini
+- ✅ **Analyse IA Avancée** : Structuration intelligente via LLM OVH AI Endpoints
+- ✅ **Authentification OIDC** : Connexion sécurisée Azure AD Entra ID via Keycloak
 - ✅ **Génération DOCX Pro** : Formatage identique au template de référence
 - ✅ **Amélioration de Contenu** : Mode basique et ciblé avec appel d'offres
 - ✅ **Traduction Multilingue** : Français, Anglais, Italien, Espagnol
@@ -33,8 +35,9 @@ Système automatisé professionnel qui transforme vos CV PDF/DOCX en documents W
 ### 1. Prérequis
 
 - **Python 3.8+** (testé avec Python 3.14)
-- **Clé API OpenAI** avec accès à GPT-4o ou GPT-4o-mini
+- **Clé API OVH AI Endpoints** (variable `AI_API_KEY`)
 - **Système d'exploitation** : Windows, Linux ou macOS
+- (Prod) Compte Azure AD Entra ID pour l'authentification
 
 ### 2. Installation des dépendances
 
@@ -49,7 +52,7 @@ pip install -r requirements.txt
 ```
 
 **Dépendances principales :**
-- `openai>=1.0.0` : API OpenAI pour l'analyse IA
+- `openai>=1.0.0` : Client compatible OVH AI Endpoints (interface OpenAI)
 - `pdfplumber>=0.9.0` : Extraction de texte PDF
 - `python-docx>=0.8.11` : Génération de fichiers Word
 - `docx2txt>=0.8` : Extraction de texte DOCX
@@ -77,13 +80,18 @@ notepad .env
 
 **Contenu minimal du .env :**
 ```env
-# OpenAI Configuration
-OPENAI_API_KEY=sk-votre_clé_api_ici
-OPENAI_MODEL=gpt-4o-mini
+# OVH AI Endpoints
+AI_API_KEY=votre_cle_ovh_ai
+AI_API_BASE_URL=https://oai.endpoints.kepler.ai.cloud.ovh.net/v1
+AI_MODEL=Llama-3.3-70B-Instruct
 
 # Application Settings
-APP_TITLE=CV Generator Pro
+APP_TITLE=CV Generator
 ENVIRONMENT=production
+
+# Auth Keycloak (prod) — voir KEYCLOAK.md
+KEYCLOAK_ENABLED=false  # true en production
+OIDC_CLIENT_SECRET=votre_secret_keycloak
 
 # File Limits
 MAX_FILE_SIZE_MB=10
@@ -94,12 +102,12 @@ ALLOWED_EXTENSIONS=pdf,docx,doc,txt
 
 ```powershell
 # Windows PowerShell
-$env:OPENAI_API_KEY="sk-votre_clé_api_ici"
-$env:OPENAI_MODEL="gpt-4o-mini"
+$env:AI_API_KEY="votre_cle_ovh_ai"
+$env:AI_MODEL="Llama-3.3-70B-Instruct"
 
 # Linux/macOS
-export OPENAI_API_KEY="sk-votre_clé_api_ici"
-export OPENAI_MODEL="gpt-4o-mini"
+export AI_API_KEY="votre_cle_ovh_ai"
+export AI_MODEL="Llama-3.3-70B-Instruct"
 ```
 
 ### 4. Vérification de l'installation
@@ -260,6 +268,7 @@ cv_gen/
 │   └── frontend/               # Interface Streamlit
 │       ├── app_cv_generator.py # Application principale
 │       └── components/         # Composants UI
+│           ├── auth.py         # 🔐 Authentification OIDC / Keycloak
 │           ├── upload.py
 │           ├── options.py
 │           ├── conversion.py
@@ -2234,7 +2243,8 @@ Ce projet utilise des bibliothèques open-source sous licences MIT, Apache 2.0, 
 ### Technologies Utilisées
 
 Un grand merci aux créateurs et mainteneurs de :
-- **OpenAI** pour l'API GPT-4o
+- **OVH AI Endpoints** pour l'inférence LLM
+- **Keycloak** pour le broker OIDC
 - **pdfplumber** pour l'extraction PDF robuste
 - **python-docx** pour la génération de documents Word
 - **FastAPI** pour le framework API moderne
@@ -2244,6 +2254,13 @@ Un grand merci aux créateurs et mainteneurs de :
 ### Contributeurs
 
 Voir [REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md) pour l'historique détaillé des améliorations.
+
+### 📚 Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Architecture technique et stack
+- [DEPLOY.md](DEPLOY.md) — Guide de déploiement Docker/production
+- [KEYCLOAK.md](KEYCLOAK.md) — Authentification OIDC avec Keycloak et Azure AD
+- [CHANGELOG.md](CHANGELOG.md) — Historique des versions
 
 ---
 

@@ -132,6 +132,7 @@ def _decode_jwt_payload(token: str) -> dict:
     Le token a déjà été validé par Keycloak lors de l'échange du code.
     """
     import base64, json as _json
+
     try:
         payload_b64 = token.split(".")[1]
         # Padding Base64URL → Base64
@@ -156,7 +157,8 @@ def _extract_user_from_tokens(tokens: dict) -> Optional[dict]:
                     "sub": claims.get("sub", ""),
                     "name": claims.get("name") or claims.get("preferred_username", ""),
                     "email": claims.get("email", ""),
-                    "preferred_username": claims.get("preferred_username") or claims.get("email", ""),
+                    "preferred_username": claims.get("preferred_username")
+                    or claims.get("email", ""),
                     "given_name": claims.get("given_name", ""),
                     "family_name": claims.get("family_name", ""),
                 }
@@ -230,7 +232,9 @@ def require_auth() -> Optional[dict]:
                 st.rerun()
                 return None
             else:
-                st.error("⚠️ Authentification réussie mais impossible d'extraire le profil du token.")
+                st.error(
+                    "⚠️ Authentification réussie mais impossible d'extraire le profil du token."
+                )
         # tokens est None : l'échange a échoué (st.error déjà affiché)
         st.query_params.clear()
         if st.button("🔄 Réessayer la connexion"):
@@ -308,7 +312,9 @@ def _render_login_page() -> None:
         )
     except Exception as exc:
         st.error(f"⚠️ Impossible de contacter Keycloak : {exc}")
-        st.info("Vérifiez que le container Keycloak est démarré : `sudo docker compose ps`")
+        st.info(
+            "Vérifiez que le container Keycloak est démarré : `sudo docker compose ps`"
+        )
 
 
 def _do_logout() -> None:
