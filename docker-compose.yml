@@ -82,6 +82,7 @@ services:
       - KC_HTTP_RELATIVE_PATH=/auth
       - KC_HOSTNAME_URL=https://94.23.185.97/auth
       - KC_HOSTNAME_ADMIN_URL=https://94.23.185.97/auth
+      - JAVA_OPTS_APPEND=-Djava.net.preferIPv4Stack=true
     ports:
       - "8080:8080"
     volumes:
