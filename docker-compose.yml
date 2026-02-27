@@ -49,7 +49,7 @@ services:
       - API_HOST=backend
       - API_PORT=8000
       - KEYCLOAK_ENABLED=${KEYCLOAK_ENABLED:-false}
-      - KEYCLOAK_EXTERNAL_URL=${KEYCLOAK_EXTERNAL_URL:-https://94.23.185.97/auth}
+      - KEYCLOAK_EXTERNAL_URL=${KEYCLOAK_EXTERNAL_URL:-https://cv-generator.alltechconsulting.fr/auth}
       - KEYCLOAK_INTERNAL_URL=${KEYCLOAK_INTERNAL_URL:-http://keycloak:8080/auth}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM:-cv-generator}
       - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-cv-generator-app}
@@ -80,8 +80,8 @@ services:
       - KC_HTTP_ENABLED=true
       - KC_PROXY_HEADERS=xforwarded
       - KC_HTTP_RELATIVE_PATH=/auth
-      - KC_HOSTNAME_URL=https://94.23.185.97/auth
-      - KC_HOSTNAME_ADMIN_URL=https://94.23.185.97/auth
+      - KC_HOSTNAME_URL=https://cv-generator.alltechconsulting.fr/auth
+      - KC_HOSTNAME_ADMIN_URL=https://cv-generator.alltechconsulting.fr/auth
       - JAVA_OPTS_APPEND=-Djava.net.preferIPv4Stack=true
     ports:
       - "8080:8080"
@@ -96,7 +96,7 @@ services:
       retries: 5
       start_period: 90s
 
-  # Nginx Reverse Proxy (optionnel)
+  # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
     container_name: cv-generator-nginx
@@ -110,10 +110,9 @@ services:
     depends_on:
       - backend
       - frontend
+      - keycloak
     networks:
       - cv-network
-    profiles:
-      - with-nginx
 
 networks:
   cv-network:
